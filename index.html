@@ -154,7 +154,601 @@ diff c1.hex c2.hex
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/09/10/Openstack-RDO-CentOS-Error/">Installing Openstack via RDO on CentOS 6.5</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-09-10T16:47:00-07:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>10</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>4:47 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h1>RDO Packstack failing to install Openstack</h1>
+
+<h2>Today I needed to bring up a new &ldquo;all in one&rdquo; Openstack Virtual Machine</h2>
+
+<p>I now work at a company called Virtustream. Here I am currently working on projects that require to me to run a few virtual machines at a time all on my poor little W530 Thinkpad laptop. The strain (or most likely the heat from me being an idiot and working from bed when sick which did not allow my laptop to breath well probably) on my laptop caused my HardDrive to crash.</p>
+
+<p>Went to get to work in the morning and was greeted by my favorite. Cannot run anything, your filesystem is mounted read only, etc etc messages.. I have seen this a few times before. Replace my hard drive maybe 3 ro 4 times already (I bought a laptop pad with ventilation in case I work from bed anymore). Anyhow I just upgraded to a SSD HD. I do not know how I ever worked without this thing.. It is such an upgrade.
+So much faster.</p>
+
+<p>Anyway, so what this whole blog post is really about is when I went to install my IceHouse Openstack All In One via RedHat&rsquo;s RDO PackStack, which is found at <a href="https://openstack.redhat.com/Quickstart">RDO PackStack Quick Install</a>. I ran through the simple directions like usual but the install failed. I even tried disabling SELinux by editing: /etc/selinux/config and setting:</p>
+
+<pre><code>SELINUX=permissive
+</code></pre>
+
+<p> then restarting and installing. I tried it with a fresh VM then, re installed Cent OS 6.5. Nothing would work.</p>
+
+<p> It kept dying at:</p>
+
+<pre><code>192.168.122.166_nova.pp:                             [ DONE ]
+Applying 192.168.122.166_neutron.pp
+192.168.122.166_neutron.pp:                       [ ERROR ]
+Applying Puppet manifests                         [ ERROR ]
+</code></pre>
+
+<p>The logs shows the following in red:</p>
+
+<pre><code>Warning: Config file /etc/puppet/hiera.yaml not found, using Hiera defaults
+Warning: Scope(Class[Neutron::Server]): The sql_connection parameter is deprecated, use database_connection instead.
+Warning: Scope(Class[Neutron::Plugins::Ml2]): enable_security_group is deprecated. Security is managed by the firewall_drive value in ::neutron::agents::ml2::ovs.
+
+
+Warning: The package type's allow_virtual parameter will be changing its default value from false to true in a future release. If you do not want to allow virtual packages, please explicitly set allow_virtual to false.
+   (at /usr/lib/ruby/site_ruby/1.8/puppet/type/package.rb:430:in `default')
+
+
+Error: sysctl -p /etc/sysctl.conf returned 255 instead of one of [0]
+Error: /Stage[main]/Packstack::Neutron::Bridge/Exec[sysctl_refresh]/returns: change from notrun to 0 failed: sysctl -p /etc/sysctl.conf returned 255 instead of one of [0]
+</code></pre>
+
+<p>Among a bunch of normal colored notices..</p>
+
+<p>After googling for a while I found that someone had posted a bug and fix!!</p>
+
+<p><a href="https://bugzilla.redhat.com/show_bug.cgi?format=multiple&amp;id=1132129">Openstack PackStack CentOS 6.5 Install Patch</a></p>
+
+<p>Looking through the patch for the fix I see that they just needed to add a -e parameter to sysctl to ingore some new keys added to /etc/sysctl.conf in CentOS 6.5</p>
+
+<hr />
+
+<p>Finally, the workaround. Well you do not need to re format/start form scratch like I did a few times. You can just go and edit:</p>
+
+<pre><code>vim /usr/share/openstack-puppet/modules/packstack/manifests/neutron/bridge.pp
+</code></pre>
+
+<p>And then change the line:</p>
+
+<pre><code>    command =&gt; 'sysctl -p /etc/sysctl.conf',
+</code></pre>
+
+<p>to:</p>
+
+<pre><code>    command =&gt; 'sysctl -e -p /etc/sysctl.conf',
+</code></pre>
+
+<p>Note the new -e param. This ignore unknown keys so that no error will be returned, crashing the packstack install.</p>
+
+<p>Then to continue your packstack install, you need to re run packstack but with your &ldquo;answer file&rdquo; which contains all the passwords and info needed from the partially complete install you just tried to do:</p>
+
+<p>Run this via:</p>
+
+<pre><code>packstack --answer-file=packstack-answers-20140910-111306.txt
+</code></pre>
+
+<p>NOTE: You answer file with have a different name/timestamp!</p>
+
+<p>And after this your install should work!  Good luck!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/15/pycon/">How to Record Live Video From PyCon</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2013-03-15T12:30:00-07:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>15</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>12:30 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>PyCon has so many awesome talks! The problem is that they are happening at the same time!</p>
+
+<p>To deal with this I have a 2 part solution:</p>
+
+<ul>
+<li>First I goto a page I want to watch and run this JS code I whipped up to grab the actual video URLS:</li>
+</ul>
+
+
+<p>JS Code:</p>
+
+<pre><code>for (m in player_jwobject.config.modes) {
+    console.log(player_jwobject.config.modes[m].type);
+    if (player_jwobject.config.modes[m].config.levels) {
+        for (l in player_jwobject.config.modes[m].config.levels) {
+            console.log(" - " + player_jwobject.config.modes[m].config.levels[l].file)
+        }
+    }
+};
+</code></pre>
+
+<p>Note that this code gives you both html5 and flash options for streaming video. And will look like this:</p>
+
+<pre><code>html5
+ - http://50.16.83.230:8080/webcast-low.webm?q=1363375116439
+ - http://50.16.83.230:8080/webcast-high.webm?q=1363375116439
+flash
+ - http://50.16.83.230:8080/webcast-low.flv?q=1363375116439
+ - http://50.16.83.230:8080/webcast-high.flv?q=1363375116439
+download
+</code></pre>
+
+<ul>
+<li>Chose and dump one of these streams. Either will probably work fine however I chose to low quality html5 stream:</li>
+</ul>
+
+
+<p>Command to run (requires mplayer):</p>
+
+<pre><code>mplayer -dumpstream "http://50.16.83.230:8080/webcast-low.webm?q=1363375116439"\
+ -dumpfile interpetermplayer
+</code></pre>
+
+<p>Or use ffmpeg:</p>
+
+<pre><code>ffmpeg -i http://50.16.160.194:8080/webcast-high.webm\?q\=1363381000621 pycon.webm
+</code></pre>
+
+<p>This will save the webm stream to a file called: interpetermplayer</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/12/ubuntu1210/">Ubuntu(Kubuntu) Web Pages Load Painfully Slow</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2013-02-12T22:30:00-08:00'><span class='date'><span class='date-month'>Feb</span> <span class='date-day'>12</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>10:30 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>My new Laptop from work, I recently started a new job at a company called Virtustream, was loaded with Ubuntu (Kubuntu I believe actually since its running KDE and I do not think that is the default with Ubuntu?) which was fine, I like the aptitude package manager, however I noticed that web pages loaded PAINFULLY SLOW. I tried anumber of things but when I saw that it was really new sites that I hadn&rsquo;t yet visited that were loading slowly I guessed DNS.</p>
+
+<p>Upon googling Ubuntu 12.10 DNS I saw there were a number of people complaining. I decided to give it a try and set my /etc/resolv.conf to Google&rsquo;s DNS servers:</p>
+
+<pre><code>nameserver 8.8.8.8
+nameserver 8.8.4.4
+</code></pre>
+
+<p>And now it runs like charm..</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/27/udptornado/">Using UDP in the Python Tornado Framework</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2013-01-27T12:48:00-08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>27</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>12:48 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A little while ago I was working on an API endpoint that needed to ask the BitTorrent Live video streaming trackers how many people were watching what swarms. I needed to do this by sending the byte 4 to the tracker on a certain ip and port. We were using Tornado. Previously to use UDP sockets with the Tornado event loop (in my python DHT project for example) I just created a non blocking UDP socket and added a handler for the READ state.</p>
+
+<pre><code>self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+self.io_loop.add_handler(self.sock.fileno(), self.handle_input, self.io_loop.READ)
+
+udpsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+udpsock.setblocking(0)
+</code></pre>
+
+<p>The callback for this handler looked like this:</p>
+
+<pre><code>def handle_input(self, fd, events):
+    (data, source_ip_port) = self.sock.recvfrom(4096)
+    bdict = bdecode(data)
+
+    #Got a response from some previous query
+    if bdict["y"] == "r":
+        self.handle_response(bdict, source_ip_port)
+
+    #Porb gonna have to ad a listenr socket
+    #Got a query for something
+    if bdict["y"] == "q":
+        self.handle_query(bdict, source_ip_port)
+</code></pre>
+
+<p>I believe this is an appropriate way to handle UDP sockets in Tornado (as the library only comes with TCP/HTTP based clients I know of..). However my friend <a href="http://kyle.graehl.org/">Kyle Grahel</a> put together a nice <a href="http://kyle.graehl.org/coding/2012/12/07/tornado-udpstream.html">UDP Wrapper</a> class that is much closer to and even takes methods from the general Tornado IOStream class.</p>
+
+<p>Using the UDPWrapper I was able to do something like this (I actually added an enter and exit for the with however I am not sure if its actually very pythonic to do it that way versus try finally):</p>
+
+<pre><code>udpsockwrapper = UDPSockWrapper(udpsock, in_ioloop=io_loop)
+response = None
+with udpsockwrapper:
+    udpsockwrapper.sendto(chr(4), (tracker_ip, int(tracker_port)))
+    response = yield gen.Task(udpsockwrapper.read_chunk)
+</code></pre>
+
+<p>You may notice the yield gen.Task above? This is using Tornado&rsquo;s awesome gen library. It basically allows you to turn your functions into generators which the event loop basically iterates through as it hits your callbacks. This allows you to take your nested callback code and turn it into a synchronous style. I believe this is similar to the Deferred class you yield with in the Twisted framework.</p>
+
+<p>My modified version of the UDPWrapper:</p>
+
+<pre><code>import tornado, time
+
+#From Kyle Grahel - http://kyle.graehl.org/
+#The __enter__ and __exit__ are added by me.. probably not the best way to use
+#these though..
+class UDPSockWrapper(object):
+    def __enter__(self):
+        return
+
+    def __exit__(self, type, value, traceback):
+        self.close()
+
+    def __init__(self, socket, in_ioloop=None):
+        self.socket = socket
+        self._state = None
+        self._read_callback = None
+        self.ioloop = in_ioloop or tornado.ioloop.IOLoop.instance()
+
+    def __repr__(self):
+        return "&lt;UDPSockWrap:%s,rc:%s&gt;" % (self.socket.fileno(), self._read_callback)
+
+    def _add_io_state(self, state):
+        if self._state is None:
+            self._state = tornado.ioloop.IOLoop.ERROR | state
+            #with stack_context.NullContext():
+            self.ioloop.add_handler(
+                self.socket.fileno(), self._handle_events, self._state)
+        elif not self._state &amp; state:
+            self._state = self._state | state
+            self.ioloop.update_handler(self.socket.fileno(), self._state)
+
+    def sendto(self, msg, dest):
+        return self.socket.sendto(msg, dest)
+
+    def recv(self,sz):
+        return self.socket.recv(sz)
+
+    def close(self):
+        self.ioloop.remove_handler(self.socket.fileno())
+        self.socket.close()
+        self.socket = None
+
+    def read_chunk(self, callback=None, timeout=4):
+        self._read_callback = callback
+        self._read_timeout = self.ioloop.add_timeout( time.time() + timeout, 
+            self.check_read_callback )
+        self._add_io_state(self.ioloop.READ)
+
+    def check_read_callback(self):
+        if self._read_callback:
+            # XXX close socket?
+            #data = self.socket.recv(4096)
+            self._read_callback(None, error='timeout')
+
+    def _handle_read(self):
+        if self._read_timeout:
+            self.ioloop.remove_timeout(self._read_timeout)
+        if self._read_callback:
+            try:
+                data = self.socket.recv(4096)
+            except:
+                # conn refused??
+                data = None
+            self._read_callback(data);
+            self._read_callback = None
+
+    def _handle_events(self, fd, events):
+        if events &amp; self.ioloop.READ:
+            self._handle_read()
+        if events &amp; self.ioloop.ERROR:
+            logging.error('%s event error' % self)
+</code></pre>
+
+<p>Another side note is that read_chunk above has the keyword argument callback. This is a requirement for the gen.Task class. The function that it executes should have a keyword argument callback=None. In order to convert any function to a function with this callback kwarg I used this lambda:</p>
+
+<pre><code>lambda **kwargs: db.get_item('users', {"HashKeyElement": {"S": username}}, kwargs['callback'])
+</code></pre>
+
+<p>You can then use them in gen.Task:</p>
+
+<pre><code>yield gen.Task(
+            lambda **kwargs: db.get_item('users', {"HashKeyElement": {"S": username}}, kwargs['callback']))
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/27/sublimeconsole/">Open File From Console Python Traceback in Text Editor</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2013-01-27T12:48:00-08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>27</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>12:48 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Often when I am programming I want to be able to quickly find a function/class definition when I hit a traceback. My normal dev environment is basically just Sublime Text 2 and the OSX console. My Co-Worker Brahm Cohan figured out a cool trick the other day from one of his friends I believe.</p>
+
+<p>Basically, you:</p>
+
+<p>Open, the Automator app. Create a new &ldquo;Service&rdquo;.</p>
+
+<p><img src="/images/automator.png" alt="Service Project in Automator" /></p>
+
+<p>The service should execute the following (you can replace Sublime with whatever editor you use):</p>
+
+<p>open -a Sublime\ Text\ 2 $1</p>
+
+<p><img src="/images/service.png" alt="Sublime Text command" /></p>
+
+<p>Then open up System Preferences. Goto Keyboard under the Keyboard Shortcuts menu scroll down to find your new service. I named mine tosublime and set the Command-L combo to run it.</p>
+
+<p><img src="/images/preferences.png" alt="Perferences Keyboard window" /></p>
+
+<p>Now I can select the absolute path of a file in my python tracebacks and hit Command L. This opens up the file I need to start debugging in. With a little more work I am sure you could parse out the line number too.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/26/vacation/">Unlimited Vacation</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2013-01-26T12:48:00-08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>12:48 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I always laugh when I see jobs with unlimited vacation time. This seems like a joke to me. At any company I have ever worked for it seemed like people had vacation time rolling over from previous years or were in fear of losing it for not using it. There seems to be a guilt about using vacation time.</p>
+
+<p>I personally am always worried about using mine, I have this illogical guilt. I feel like I needed to be around working as hard as possible as often as possible or else I will be viewed as a slacker. If anything having an alloted amount of vacation time is a blessing. It represents a company wide accepted amount of time for me to take off. If somone gave me &ldquo;unlimited vacation time&rdquo; I would never take any vacation because I would always feel like I was taking advantage, or at least like I was being percieved as un involved. It makes me wonder if companies realize this and use this &ldquo;benefit&rdquo; to their advantage.</p>
+
+<p>I would love to hear from anyone working at a company with this benefit and hear about the politics behind using it.</p>
+
+<h2>Points from comments here and hacker news</h2>
+
+
+<p>It was great to see so many different points of view in the comments both here and on Hacker News. After reading a few I felt I should clairify my reasoning a little.</p>
+
+<p>The &ldquo;Unlimited Vacation&rdquo; benefit seems to be more advantageous for companies and possibly misleading for the employees. This [article])(<a href="http://finance.yahoo.com/blogs/the-exchange/unlimited-vacation-time-ultimate-benefit-160807503.html">http://finance.yahoo.com/blogs/the-exchange/unlimited-vacation-time-ultimate-benefit-160807503.html</a>) makes the claim that with the unlimited vacation benefit the limiting factor is really &ldquo;can you get your work done?&rdquo; The ironic thing is that in any smaller tech company, which are the companies I see offering this, there is always work to be done. There has never been a point in the last two years where I personally felt like it was a good time to take a vacation. There has always been some feature we imminently needed. Point being, theres always work to be done so there&rsquo;s rarely a good time to take advantage of your &ldquo;unlimited vacation&rdquo;.</p>
+
+<p>It also saves the company a full paycheck or so when the employee leaves. As anemitz (a Hacker News commenter) pointed out:</p>
+
+<p>&ldquo;Another less likely employer benefit to be considered is that in roughly half of that U.S. states, employers must pay out accrued vacation time if there is a policy in place.</p>
+
+<p>An example from California&rsquo;s vacation faq (<a href="http://www.dir.ca.gov/dlse/faq_vacation.htm">http://www.dir.ca.gov/dlse/faq_vacation.htm</a>):</p>
+
+<p>&lsquo;For example, an employee who is entitled to three weeks of annual vacation (15 work days entitlement per year x 8 hours/day = 120 hours vacation entitlement per year) who quits on August 7, 2002 (the 219th day of the year) without having taken any vacation in 2002, who has no vacation carry-over from prior years, and whose final rate of pay is $13.00 per hour, would be entitled to $936.00 vacation pay upon separation&rsquo;
+&#8221;</p>
+
+<p>By giving employees unlimited vacation time and not giving them an alloted amount of PTO it seems like the company won&rsquo;t have to keep track and pay the employee for their remaining PTO when they leave.</p>
+
+<p>And again, my guilt about taking a vacation. Personally, if I do not have a quantified amount of expected vacation time I will not know how much I am expected to take and probably wont take much at all.</p>
+
+<p>On the other hand, as dvo pointed out:</p>
+
+<p>&ldquo;
+It might be a great policy, and I&rsquo;m sure it depends on the details of how it is implemented and the culture of the company where it is implemented&hellip;
+&rdquo;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/14/surfjournal/">Surf Journal</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2012-12-14T19:48:00-08:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>14</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>7:48 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I think there is a great opportunity to take advantage of all the great NOAA information out there provided by the government for free. With this I can use supervised learning with input from professionals and surfers using the site. I would gather professional input from the other surf forecasting sites out there and allow members to sign up and chart their own surf journals.</p>
+
+<p>This would build surf journals for not just the popular spots like those you see on surfline but for anyspot a surfer desires. He could specify the closest booies and which area the secret spot was in and I would gather wind, tide, and swell information mostly to build a profile of the spot.</p>
+
+<p>This blog post is actually being used as a landing page to gauge interest via a Google AdWords campaign. I will set this as the destination and hope people click through my ads. If so I know there are people interested in this idea as well.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/29/string-idea/">Random Idea About Language Implementation and Strings</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2012-10-29T22:30:00-07:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>10:30 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I was reading this awesome post about why this guy <a href="http://www.evanmiller.org/why-i-program-in-erlang.html">appreciates erlang</a>.</p>
+
+<p>And this paragraph caught my eye.</p>
+
+<hr />
+
+<p>Or take string concatenation. If you pop open the implementation of string concatenation in Perl, Ruby, or JavaScript, you&rsquo;ll are certain to find an if statement, a realloc, and a memcpy. That is, when you concatenate two strings, the first string is grown to make room for the second, and then the second is copied into the first. This approach has worked for decades and is the “obvious” thing to do. Erlang&rsquo;s approach is non-obvious, and, I believe, correct. Erlang does not use a contiguous chunk of memory to represent a sequence of bytes. Instead, it represents a sequence of bytes as nested lists of non-contiguous chunks of memory. The result is that concatenating two strings takes O(1) time in Erlang, compared O(N) time in other languages. This is why template rendering in Ruby, Python, etc. is slow, but very fast in Erlang.</p>
+
+<hr />
+
+<p>I just thought it would be a cool little mini project to try and re implement Python and or Ruby strings to act like Erlang strings (the linked list of bytes versus contiguous). I am kind of using this as a note to myself since writing things down in other places just gets lost a lot of the time..</p>
+
+<p>It would be cool to do this though and then compare the new ruby build with the previous in a bunch of different speed string tests.</p>
+
+<p>After talking to some friends at work I realized that this already done. Using the rope data structure. A cool implementation, <a href="https://github.com/josephg/librope">librope</a> is a very interesting read.</p>
+
+<p>After checking the librope implementation out I realized that using these strings would only be a benfit in very specific situations, long modifiable strings.</p>
+
+<p>However, having an implementation accessbile in a standard library would deff be a cool thing to have. I could see this being super helpful when doing something like building a website response from templates.</p>
+
+<p>Actually from a quick google it sounds like this is how PyPy implemented strings.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/08/github-diary/">Github Diary</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2012-10-08T15:54:00-07:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>3:54 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Every morning I have to present the tasks I have been working on in a meeting called Scrum. This is helpful for a number of reasons. It keeps everyone focused, the team knows what is going on and who to talk to about specific issues, keeps people from working on the same problem, etc..</p>
+
+<p>One thing that bugs me though is that I can never remember the full list of things I have been working on. To fix this I started making a list of my daily activities in a file called WhatIDid on my Desktop. This actually worked really well.</p>
+
+<p>Then recently I needed to give my boss a list of all the project I had been working on recently. This was really hard to do as I have done a ton of work on about every part of our projects architecure. Thats when I decided I would use Github as my diary.</p>
+
+<p>I now commit my WhatIDid file in a private repository with the date as the commit message. This way I can browse back through time whenever I want and see all the work I have accomplished when necessary.</p>
+</div>
+  
+  
+
+
+    </article>
+  
   <div class="pagination">
+    
+      <a class="prev" href="/posts/2">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -168,6 +762,22 @@ diff c1.hex c2.hex
     
       <li class="post">
         <a href="/blog/2014/09/11/checking-out-sublime-text-3-binary-hex-diff-versus-cracked-version/">Checking Out Sublime Text 3 Binary Hex Diff Versus Cracked Version</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/10/Openstack-RDO-CentOS-Error/">Installing Openstack via RDO on CentOS 6.5</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/15/pycon/">How to Record Live Video From PyCon</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/12/ubuntu1210/">Ubuntu(Kubuntu) Web Pages Load Painfully Slow</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/01/27/udptornado/">Using UDP in the Python Tornado Framework</a>
       </li>
     
   </ul>
