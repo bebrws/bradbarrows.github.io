@@ -122,25 +122,25 @@ diff c1.hex c2.hex
 
 <p>The original file:</p>
 
-<pre><code>.data:0x00000000    f8  clc
-</code></pre>
-
-<p>    .data:0x00000001    8e00    mov    es,WORD PTR [rax]
-    .data:0x00000003    e8b7510700  call   func_000751bf
-    .data:0x00000008    3bc0    cmp    eax,eax
-    .data:0x0000000a    0f94c0  sete   al
-    .data:0x0000000d    84c0    test   al,al</p>
+<p><code>
+    .data:0x00000000    f8  clc
+    .data:0x00000001    8e00    mov    es,WORD PTR [rax]
+    .data:0x00000003    e8b7510700  call   func_000751bf
+    .data:0x00000008    3bc0    cmp    eax,eax
+    .data:0x0000000a    0f94c0  sete   al
+    .data:0x0000000d    84c0    test   al,al
+</code></p>
 
 <p>The cracked file:</p>
 
-<pre><code>.data:0x00000000    f8  clc
-</code></pre>
-
-<p>    .data:0x00000001    8e00    mov    es,WORD PTR [rax]
-    .data:0x00000003    e8b7510700  call   func_000751bf
-    .data:0x00000008    85c0    test   eax,eax
-    .data:0x0000000a    0f94c0  sete   al
-    .data:0x0000000d    84c0    test   al,al</p>
+<p><code>
+    .data:0x00000000    f8  clc
+    .data:0x00000001    8e00    mov    es,WORD PTR [rax]
+    .data:0x00000003    e8b7510700  call   func_000751bf
+    .data:0x00000008    85c0    test   eax,eax
+    .data:0x0000000a    0f94c0  sete   al
+    .data:0x0000000d    84c0    test   al,al
+</code></p>
 
 <p>Notice the only different is the cmp to test. According to an assembly reference I see that test is just a bitwise AND comparison so test eax,eax will always AND the same values always having the same result.</p>
 
@@ -181,7 +181,12 @@ diff c1.hex c2.hex
 
 <p>I now work at a company called Virtustream. Here I am currently working on projects that require to me to run a few virtual machines at a time all on my poor little W530 Thinkpad laptop. The strain (or most likely the heat from me being an idiot and working from bed when sick which did not allow my laptop to breath well probably) on my laptop caused my HardDrive to crash.</p>
 
-<p>Went to get to work in the morning and was greeted by my favorite. Cannot run anything, your filesystem is mounted read only, etc etc messages.. I have seen this a few times before. Replace my hard drive maybe 3 ro 4 times already (I bought a laptop pad with ventilation in case I work from bed anymore). Anyhow I just upgraded to a SSD HD. I do not know how I ever worked without this thing.. It is such an upgrade.
+<p>Went to get to work in the morning and was greeted by my favorite:</p>
+
+<pre><code>Cannot run anything, your filesystem is mounted read only, etc etc messages..
+</code></pre>
+
+<p>I have seen this a few times before. Replace my hard drive maybe 3 or 4 times already (I bought a laptop pad with ventilation in case I work from bed anymore). Anyhow I just upgraded to a SSD HD. I do not know how I ever worked without this thing.. It is such an upgrade.
 So much faster.</p>
 
 <p>Anyway, so what this whole blog post is really about is when I went to install my IceHouse Openstack All In One via RedHat&rsquo;s RDO PackStack, which is found at <a href="https://openstack.redhat.com/Quickstart">RDO PackStack Quick Install</a>. I ran through the simple directions like usual but the install failed. I even tried disabling SELinux by editing: /etc/selinux/config and setting:</p>
@@ -220,7 +225,7 @@ Error: /Stage[main]/Packstack::Neutron::Bridge/Exec[sysctl_refresh]/returns: cha
 
 <p><a href="https://bugzilla.redhat.com/show_bug.cgi?format=multiple&amp;id=1132129">Openstack PackStack CentOS 6.5 Install Patch</a></p>
 
-<p>Looking through the patch for the fix I see that they just needed to add a -e parameter to sysctl to ingore some new keys added to /etc/sysctl.conf in CentOS 6.5</p>
+<p>Looking through the patch for the fix I see that they just needed to add a -e parameter to sysctl to ignore some new keys added to /etc/sysctl.conf in CentOS 6.5</p>
 
 <hr />
 
@@ -239,7 +244,7 @@ Error: /Stage[main]/Packstack::Neutron::Bridge/Exec[sysctl_refresh]/returns: cha
 <pre><code>    command =&gt; 'sysctl -e -p /etc/sysctl.conf',
 </code></pre>
 
-<p>Note the new -e param. This ignore unknown keys so that no error will be returned, crashing the packstack install.</p>
+<p>Note the new -e param. This ignores unknown keys so that no error will be returned, crashing the packstack install.</p>
 
 <p>Then to continue your packstack install, you need to re run packstack but with your &ldquo;answer file&rdquo; which contains all the passwords and info needed from the partially complete install you just tried to do:</p>
 
