@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Haxin Mainframes]]></title>
+  <link href="http://bbarrows.github.com/atom.xml" rel="self"/>
+  <link href="http://bbarrows.github.com/"/>
+  <updated>2014-09-11T10:15:06-07:00</updated>
+  <id>http://bbarrows.github.com/</id>
+  <author>
+    <name><![CDATA[Brad Barrows]]></name>
+    <email><![CDATA[bradleyb1537@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Checking Out Sublime Text 3 Binary Hex Diff Versus Cracked Version]]></title>
+    <link href="http://bbarrows.github.com/blog/2014/09/11/checking-out-sublime-text-3-binary-hex-diff-versus-cracked-version/"/>
+    <updated>2014-09-11T09:55:14-07:00</updated>
+    <id>http://bbarrows.github.com/blog/2014/09/11/checking-out-sublime-text-3-binary-hex-diff-versus-cracked-version</id>
+    <content type="html"><![CDATA[<p>I saw a site <a href="http://ict-tricks.blogspot.com/2014/09/how-to-craked-sublime-text-3-in-ubuntu.html">Sublime Text 3 with hack/crack</a> and I am always paranoid. Wondering what the actual difference was between the
+3056 build and the crack I checked.</p>
+
+<p>Running:</p>
+
+<pre><code>xxd sublime_text\ crack\ linux\ 64\ build\ 3065 c1.hex
+xxd /opt/sublime_text/sublime_text c2.hex
+diff c1.hex c2.hex
+</code></pre>
+
+<p>I saw that there was the following diff:</p>
+
+<pre><code>2111c2111
+&lt; 00083e0: f88e 00e8 b751 0700 3bc0 0f94 c084 c088  .....Q..;.......
+---
+&gt; 00083e0: f88e 00e8 b751 0700 85c0 0f94 c084 c088  .....Q..........
+</code></pre>
+
+<p>Putting that into an <a href="http://www.onlinedisassembler.com/odaweb/">online assembler/disassembler</a>:</p>
+
+<p>The original file:</p>
+
+<pre><code>.data:0x00000000    f8  clc
+</code></pre>
+
+<p>    .data:0x00000001    8e00    mov    es,WORD PTR [rax]
+    .data:0x00000003    e8b7510700  call   func_000751bf
+    .data:0x00000008    3bc0    cmp    eax,eax
+    .data:0x0000000a    0f94c0  sete   al
+    .data:0x0000000d    84c0    test   al,al</p>
+
+<p>The cracked file:</p>
+
+<pre><code>.data:0x00000000    f8  clc
+</code></pre>
+
+<p>    .data:0x00000001    8e00    mov    es,WORD PTR [rax]
+    .data:0x00000003    e8b7510700  call   func_000751bf
+    .data:0x00000008    85c0    test   eax,eax
+    .data:0x0000000a    0f94c0  sete   al
+    .data:0x0000000d    84c0    test   al,al</p>
+
+<p>Notice the only different is the cmp to test. According to an assembly reference I see that test is just a bitwise AND comparison so test eax,eax will always AND the same values always having the same result.</p>
+
+<p>Looks like a safe hack to me..</p>
+
+<p>NOTE: I pay for Sublime Text 3. It is amazing software and I am all for supporting the authors. This page just came up when searching for Sublime Text 3 and I was curious.</p>
+]]></content>
+  </entry>
+  
+</feed>

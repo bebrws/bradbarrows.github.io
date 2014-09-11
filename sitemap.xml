@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  
+  <url>
+    <loc>http://bbarrows.github.com/blog/2014/09/11/checking-out-sublime-text-3-binary-hex-diff-versus-cracked-version/</loc>
+    
+    <lastmod>2014-09-11T09:55:14-07:00</lastmod>
+    
+    <priority>0.8</priority>
+  </url>
+  
+  
+  <url>
+    <loc>http://bbarrows.github.com/blog/archives/</loc>
+    <lastmod>2014-09-11T10:15:06-07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>http://bbarrows.github.com/</loc>
+    <lastmod>2014-09-11T10:15:06-07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  
+  
+</urlset>
