@@ -4,7 +4,7 @@
   <title><![CDATA[Haxin Mainframes]]></title>
   <link href="http://bbarrows.github.com/atom.xml" rel="self"/>
   <link href="http://bbarrows.github.com/"/>
-  <updated>2014-09-11T16:58:07-07:00</updated>
+  <updated>2014-09-11T17:04:08-07:00</updated>
   <id>http://bbarrows.github.com/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -40,25 +40,23 @@ diff c1.hex c2.hex
 
 <p>The original file:</p>
 
-<p><code>
-    .data:0x00000000    f8  clc
-    .data:0x00000001    8e00    mov    es,WORD PTR [rax]
-    .data:0x00000003    e8b7510700  call   func_000751bf
-    .data:0x00000008    3bc0    cmp    eax,eax
-    .data:0x0000000a    0f94c0  sete   al
-    .data:0x0000000d    84c0    test   al,al
-</code></p>
+<pre><code>.data:0x00000000    f8  clc
+.data:0x00000001    8e00    mov    es,WORD PTR [rax]
+.data:0x00000003    e8b7510700  call   func_000751bf
+.data:0x00000008    3bc0    cmp    eax,eax
+.data:0x0000000a    0f94c0  sete   al
+.data:0x0000000d    84c0    test   al,al
+</code></pre>
 
 <p>The cracked file:</p>
 
-<p><code>
-    .data:0x00000000    f8  clc
-    .data:0x00000001    8e00    mov    es,WORD PTR [rax]
-    .data:0x00000003    e8b7510700  call   func_000751bf
-    .data:0x00000008    85c0    test   eax,eax
-    .data:0x0000000a    0f94c0  sete   al
-    .data:0x0000000d    84c0    test   al,al
-</code></p>
+<pre><code>.data:0x00000000    f8  clc
+.data:0x00000001    8e00    mov    es,WORD PTR [rax]
+.data:0x00000003    e8b7510700  call   func_000751bf
+.data:0x00000008    85c0    test   eax,eax
+.data:0x0000000a    0f94c0  sete   al
+.data:0x0000000d    84c0    test   al,al
+</code></pre>
 
 <p>Notice the only different is the cmp to test. According to an assembly reference I see that test is just a bitwise AND comparison so test eax,eax will always AND the same values always having the same result.</p>
 
