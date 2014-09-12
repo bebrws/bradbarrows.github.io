@@ -4,7 +4,7 @@
   <title><![CDATA[Haxin Mainframes]]></title>
   <link href="http://bbarrows.github.com/atom.xml" rel="self"/>
   <link href="http://bbarrows.github.com/"/>
-  <updated>2014-09-11T17:04:08-07:00</updated>
+  <updated>2014-09-11T17:07:27-07:00</updated>
   <id>http://bbarrows.github.com/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -67,13 +67,23 @@ diff c1.hex c2.hex
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Installing Openstack via RDO on CentOS 6.5]]></title>
+    <title type="html"><![CDATA[Openstack Rdo Centos Error]]></title>
     <link href="http://bbarrows.github.com/blog/2014/09/10/Openstack-RDO-CentOS-Error/"/>
-    <updated>2014-09-10T16:47:00-07:00</updated>
+    <updated>2014-09-10T00:00:00-07:00</updated>
     <id>http://bbarrows.github.com/blog/2014/09/10/Openstack-RDO-CentOS-Error</id>
-    <content type="html"><![CDATA[<h1>RDO Packstack failing to install Openstack</h1>
+    <content type="html"><![CDATA[<pre><code>---
+</code></pre>
 
-<h2>Today I needed to bring up a new &ldquo;all in one&rdquo; Openstack Virtual Machine</h2>
+<p>layout: post
+title: &ldquo;Installing Openstack via RDO on CentOS 6.5&rdquo;
+date: 2014-09-10 16:47
+comments: true</p>
+
+<h2>categories: [Python, Openstack, Virtualization, CentOS, Work]</h2>
+
+<h2>RDO Packstack failing to install Openstack with the latest CentOS</h2>
+
+<p>Today I needed to bring up a new &ldquo;all in one&rdquo; Openstack Virtual Machine</p>
 
 <p>I now work at a company called Virtustream. Here I am currently working on projects that require to me to run a few virtual machines at a time all on my poor little W530 Thinkpad laptop. The strain (or most likely the heat from me being an idiot and working from bed when sick which did not allow my laptop to breath well probably) on my laptop caused my HardDrive to crash.</p>
 
