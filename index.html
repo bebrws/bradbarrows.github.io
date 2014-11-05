@@ -9,8 +9,10 @@
   <meta name="author" content="Brad Barrows">
 
   
-  <meta name="description" content="I saw a site Sublime Text 3 with hack/crack and I am always paranoid. Wondering what the actual difference was between the
-3056 build and the crack I &hellip;">
+  <meta name="description" content="--- layout: post
+title: &ldquo;Using nVidia Drivers on a Thinkpad w530&rdquo;
+date: 2014-11-5 12:47
+comments: true categories: [Ubuntu, Thinkpad, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +80,114 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/11/05/ThinkPad-w530-nVidia-Divers/">Thinkpad W530 Nvidia Divers</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2014-11-05T00:00:00-08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2014</span></span> <span class='time'>12:00 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><pre><code>---
+</code></pre>
+
+<p>layout: post
+title: &ldquo;Using nVidia Drivers on a Thinkpad w530&rdquo;
+date: 2014-11-5 12:47
+comments: true</p>
+
+<h2>categories: [Ubuntu, Thinkpad, w530, nVidia, Drivers]</h2>
+
+<h2>Drivers</h2>
+
+<p>To get the nVidia Drivers working with a w530 laptop you must select the Discrete Video Driver in the BIOS.</p>
+
+<p>Then run the following to install the ?latest? (using sudo apt-get install nvidia-current may be better) nvidia drivers:</p>
+
+<pre><code>sudo add-apt-repository -y ppa:ubuntu-x-swat/x-updates; sudo apt-get update; sudo apt-get install nvidia-331
+</code></pre>
+
+<p>The driver install should automatically create a new xorg.conf but if not you can run:</p>
+
+<pre><code>sudo nvidia-xconfig
+</code></pre>
+
+<p>Some people even chose to purge the previous integrated drivers:</p>
+
+<pre><code>sudo apt-get purge xserver-xorg-video-nouveau
+</code></pre>
+
+<p>Add blacklist it from the kernel (if there is no blacklist-nouveau.conf in /etc/modprobe.d/ you can just create it):</p>
+
+<pre><code>sudo vim /etc/modprobe.d/blacklist-nouveau.conf
+</code></pre>
+
+<p>Adding these lines:</p>
+
+<pre><code>blacklist nouveau
+blacklist lbm-nouveau
+options nouveau modeset=0
+alias nouveau off
+alias lbm-nouveau off
+</code></pre>
+
+<p>(A StackOverflow post also shows another way)[<a href="http://askubuntu.com/questions/451221/ubuntu-14-04-install-nvidia-driver">http://askubuntu.com/questions/451221/ubuntu-14-04-install-nvidia-driver</a>] to disable/blacklist the driver:</p>
+
+<pre><code>sudo echo options nouveau modeset=0 | sudo tee -a /etc/modprobe.d/nouveau-kms.conf
+sudo update-initramfs -u
+</code></pre>
+
+<p>This worked great until I had a system update. I rebooted and my laptop was flashing, trying to “startx” but failing over and over, could not even switch to a terminal via ctr-alt-f1</p>
+
+<p>It sounds like this can be fixed by (rebuilding with every kernel update)[<a href="http://askubuntu.com/questions/536562/ubuntu-14-04-with-nvidia-driver-blank-screen-after-kernel-update">http://askubuntu.com/questions/536562/ubuntu-14-04-with-nvidia-driver-blank-screen-after-kernel-update</a>]:</p>
+
+<pre><code>sudo apt-get install dkms build-essential linux-headers-generic linux-headers-`uname -r` linux-source
+</code></pre>
+
+<p>It will install dkms and the headers before you run the installer and it should give you a DKMS option during setup. DKMS will prevent the problem you are experiencing so you don&rsquo;t have to re-install every kernel upgrade.</p>
+
+<p>The issue is that every kernel upgrade the nVidia drivers are not rebuild/configured with the kernel upgrade..</p>
+
+<h2>GRUB</h2>
+
+<p>You will also need to update your boot loader, adding a boot option, nox2apic:</p>
+
+<pre><code>sudo vim /etc/default/grub
+</code></pre>
+
+<p>and add the &ldquo;nox2apic&rdquo; flag to the GRUB_CMDLINE_LINUX option, or in my case it was the GRUB_CMDLINE_LINUX_DEFAULT. I would look for the variable with the nosplash option and add it to that one, I am sure it would not hurt to add nox2apic to both if you do have both the GRUB_CMDLINE_LINUX and GRUB_CMDLINE_LINUX_DEFAULT options in ur grub config.</p>
+
+<p>You will be changing something like:
+    GRUB_CMDLINE_LINUX_DEFAULT=&ldquo;quiet splash&rdquo;
+to:
+    GRUB_CMDLINE_LINUX_DEFAULT=&ldquo;quiet splash nox2apic&rdquo;</p>
+
+<p>To update grub you will need to run:</p>
+
+<pre><code>sudo update-grub
+</code></pre>
+
+<p><a href="http://blog.jordanengbers.com/2012/11/nvidia-optimus-and-multiple-monitors-in-ubunt/">This Site</a> has a breakdown on why this option in needed.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -724,41 +834,6 @@ It might be a great policy, and I&rsquo;m sure it depends on the details of how 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/10/08/github-diary/">Github Diary</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2012-10-08T15:54:00-07:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>3:54 pm</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Every morning I have to present the tasks I have been working on in a meeting called Scrum. This is helpful for a number of reasons. It keeps everyone focused, the team knows what is going on and who to talk to about specific issues, keeps people from working on the same problem, etc..</p>
-
-<p>One thing that bugs me though is that I can never remember the full list of things I have been working on. To fix this I started making a list of my daily activities in a file called WhatIDid on my Desktop. This actually worked really well.</p>
-
-<p>Then recently I needed to give my boss a list of all the project I had been working on recently. This was really hard to do as I have done a ton of work on about every part of our projects architecure. Thats when I decided I would use Github as my diary.</p>
-
-<p>I now commit my WhatIDid file in a private repository with the date as the commit message. This way I can browse back through time whenever I want and see all the work I have accomplished when necessary.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/2">&larr; Older</a>
@@ -774,6 +849,10 @@ It might be a great policy, and I&rsquo;m sure it depends on the details of how 
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/11/05/ThinkPad-w530-nVidia-Divers/">Thinkpad W530 Nvidia Divers</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/09/11/checking-out-sublime-text-3-binary-hex-diff-versus-cracked-version/">Checking Out Sublime Text 3 Binary Hex Diff Versus Cracked Version</a>
       </li>
     
@@ -787,10 +866,6 @@ It might be a great policy, and I&rsquo;m sure it depends on the details of how 
     
       <li class="post">
         <a href="/blog/2013/02/12/ubuntu1210/">Ubuntu(Kubuntu) Web Pages Load Painfully Slow</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/01/27/udptornado/">Using UDP in the Python Tornado Framework</a>
       </li>
     
   </ul>
