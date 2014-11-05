@@ -4,7 +4,7 @@
   <title><![CDATA[Haxin Mainframes]]></title>
   <link href="http://bbarrows.github.com/atom.xml" rel="self"/>
   <link href="http://bbarrows.github.com/"/>
-  <updated>2014-11-05T14:12:14-08:00</updated>
+  <updated>2014-11-05T14:18:04-08:00</updated>
   <id>http://bbarrows.github.com/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -14,21 +14,11 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Thinkpad W530 Nvidia Divers]]></title>
+    <title type="html"><![CDATA[Using nVidia Drivers on a Thinkpad W530]]></title>
     <link href="http://bbarrows.github.com/blog/2014/11/05/ThinkPad-w530-nVidia-Divers/"/>
-    <updated>2014-11-05T00:00:00-08:00</updated>
+    <updated>2014-11-05T12:47:00-08:00</updated>
     <id>http://bbarrows.github.com/blog/2014/11/05/ThinkPad-w530-nVidia-Divers</id>
-    <content type="html"><![CDATA[<pre><code>---
-</code></pre>
-
-<p>layout: post
-title: &ldquo;Using nVidia Drivers on a Thinkpad w530&rdquo;
-date: 2014-11-5 12:47
-comments: true</p>
-
-<h2>categories: [Ubuntu, Thinkpad, w530, nVidia, Drivers]</h2>
-
-<h2>Drivers</h2>
+    <content type="html"><![CDATA[<h2>Drivers</h2>
 
 <p>To get the nVidia Drivers working with a w530 laptop you must select the Discrete Video Driver in the BIOS.</p>
 
