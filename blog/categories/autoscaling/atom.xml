@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Autoscaling | Haxin Mainframes]]></title>
+  <link href="http://bbarrows.github.com/blog/categories/autoscaling/atom.xml" rel="self"/>
+  <link href="http://bbarrows.github.com/"/>
+  <updated>2014-11-05T14:12:14-08:00</updated>
+  <id>http://bbarrows.github.com/</id>
+  <author>
+    <name><![CDATA[Brad Barrows]]></name>
+    <email><![CDATA[bradleyb1537@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Updating the Ami of an EC2 AutoScaling Group]]></title>
+    <link href="http://bbarrows.github.com/blog/2012/09/26/updating-the-ami-of-an-ec2-autoscaling-group/"/>
+    <updated>2012-09-26T11:51:00-07:00</updated>
+    <id>http://bbarrows.github.com/blog/2012/09/26/updating-the-ami-of-an-ec2-autoscaling-group</id>
+    <content type="html"><![CDATA[<p>The other day I noticed that some our instances were coming up with package install issues but when I ran the script on a fresh test instance everything worked fine.</p>
+
+<p>After looking into the differences between my test instance and the autoscaling group instances I noticed that the AMI (Operating system) was different.</p>
+
+<p>In order to change this I needed to get the <a href="http://aws.amazon.com/developertools/2535">AutoScaling Group Command Line Tools</a> and do a number of things.</p>
+
+<p>First I needed to create a new launch config. A launch config tells an autoscaling group what size EC2 instance to run and what ami to use. In order to see how your current launch config is configured you can run:</p>
+
+<pre><code>./as-describe-launch-configs your-launch-config --show-long
+</code></pre>
+
+<p>I then noticed my AMI was an old Debian image.</p>
+
+<p>I wanted to use Ubuntu for this service. I ran:</p>
+
+<pre><code>./as-create-launch-config your-new-launch-config --image-id ami-3c994355 --instance-type m1.small --key post-svn-rebuild --user-data-file ~/user-data-bootup-script.sh
+</code></pre>
+
+<p>your-new-launch-config is the name of the launch config I am creating.
+~/user-data-bootup-script.sh Is the script that is ran when a new machine is brought up. We use this to bootstrap our instance deployment scripts.</p>
+
+<p>I then updated our autoscaling group to use the new launch config and killed off the old instance (creating a new instance to take its place)</p>
+
+<pre><code>./as-update-auto-scaling-group your-autoscaling-group --launch-configuration your-new-launch-config
+
+./as-terminate-instance-in-auto-scaling-group i-894ffff4 --no-decrement-desired-capacity
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

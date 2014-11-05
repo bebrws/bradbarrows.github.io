@@ -1,0 +1,807 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Haxin Mainframes</title>
+  <meta name="author" content="Brad Barrows">
+
+  
+  <meta name="description" content="Every morning I have to present the tasks I have been working on in a meeting called Scrum. This is helpful for a number of reasons. It keeps &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bbarrows.github.com/posts/2">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Haxin Mainframes" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-22887221-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Haxin Mainframes</a></h1>
+  
+    <h2>A blog about stuff I do, find interesting, or want to blab about..</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:bbarrows.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/08/github-diary/">Github Diary</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2012-10-08T15:54:00-07:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>8</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>3:54 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Every morning I have to present the tasks I have been working on in a meeting called Scrum. This is helpful for a number of reasons. It keeps everyone focused, the team knows what is going on and who to talk to about specific issues, keeps people from working on the same problem, etc..</p>
+
+<p>One thing that bugs me though is that I can never remember the full list of things I have been working on. To fix this I started making a list of my daily activities in a file called WhatIDid on my Desktop. This actually worked really well.</p>
+
+<p>Then recently I needed to give my boss a list of all the project I had been working on recently. This was really hard to do as I have done a ton of work on about every part of our projects architecure. Thats when I decided I would use Github as my diary.</p>
+
+<p>I now commit my WhatIDid file in a private repository with the date as the commit message. This way I can browse back through time whenever I want and see all the work I have accomplished when necessary.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/26/updating-the-ami-of-an-ec2-autoscaling-group/">Updating the Ami of an EC2 AutoScaling Group</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2012-09-26T11:51:00-07:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>11:51 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The other day I noticed that some our instances were coming up with package install issues but when I ran the script on a fresh test instance everything worked fine.</p>
+
+<p>After looking into the differences between my test instance and the autoscaling group instances I noticed that the AMI (Operating system) was different.</p>
+
+<p>In order to change this I needed to get the <a href="http://aws.amazon.com/developertools/2535">AutoScaling Group Command Line Tools</a> and do a number of things.</p>
+
+<p>First I needed to create a new launch config. A launch config tells an autoscaling group what size EC2 instance to run and what ami to use. In order to see how your current launch config is configured you can run:</p>
+
+<pre><code>./as-describe-launch-configs your-launch-config --show-long
+</code></pre>
+
+<p>I then noticed my AMI was an old Debian image.</p>
+
+<p>I wanted to use Ubuntu for this service. I ran:</p>
+
+<pre><code>./as-create-launch-config your-new-launch-config --image-id ami-3c994355 --instance-type m1.small --key post-svn-rebuild --user-data-file ~/user-data-bootup-script.sh
+</code></pre>
+
+<p>your-new-launch-config is the name of the launch config I am creating.
+~/user-data-bootup-script.sh Is the script that is ran when a new machine is brought up. We use this to bootstrap our instance deployment scripts.</p>
+
+<p>I then updated our autoscaling group to use the new launch config and killed off the old instance (creating a new instance to take its place)</p>
+
+<pre><code>./as-update-auto-scaling-group your-autoscaling-group --launch-configuration your-new-launch-config
+
+./as-terminate-instance-in-auto-scaling-group i-894ffff4 --no-decrement-desired-capacity
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/24/python-min-heap-and-comparators/">Python Min Heap and Comparators</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2012-09-24T23:22:00-07:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>11:22 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>You know what really grinds my gears?!? Not being able to easily create a min heap in Python 2.7.</p>
+
+<p>Actually its not that bad. But it would be nice if you could specify a Comparator or something similar like Java. For example, check the <a href="http://docs.oracle.com/javase/1.4.2/docs/api/java/util/TreeSet.html" title="Java TreeSet Class">TreeSet</a> Class. The constructor takes an object the implements the Comparator interface which means that it acts like the Python magic method <a href="http://www.rafekettler.com/magicmethods.html"><strong>cmp</strong></a>.</p>
+
+<p>This is awesome because you can easily specify how you want to compare the objects in your heap. Normally you probably just want to compare objects against one another. This makes sense in 90% of situations. However, in my super awesome DHT project I needed to keep a list of the top N number of nodes I had recieved from my queries in order. The order I needed was from smallest to largest DHT Distance deom myself to them.</p>
+
+<p>In the <a href="http://en.wikipedia.org/wiki/Kademlia" title="Kademlia DHT">Kademlia DHT</a> the distance between two nodes is calculated by XORing each ndoes id. Therefore, to find which of two nodes is closest to me I need to compare each nodes id after xoring it with my own.</p>
+
+<p>The first idea that comes to mind is to just override my DHTPeer objects cmp method however that wouldn&rsquo;t make sense in any other sitaution when I wanted to comapre two peers.</p>
+
+<p>In order to get around this I settled with using tuples.</p>
+
+<p>I simply heappush a tuple of the metric (DHT distance) I want ot sort on and the object I really want to keep track of in the first place. This way I don&rsquo;t need to mess with the object I want sorted in my heap and I can sort whichever way I want.</p>
+
+<p>Here is an example of how I am using it:</p>
+
+<pre><code>#Part of a class from my project
+class NodeListHeap(object):
+    CONTACT_LIST_LENGTH = 5
+    def __init__(self, dht_node_id):
+        self.dht_node_id = dht_node_id
+        self.node_heap = []
+
+    def push(self, dht_peer):
+        heappush(self.node_heap, (dht_dist(self.dht_node_id, dht_peer.id), dht_peer))
+</code></pre>
+
+<p>The first argument of heappush is the heap you are pushing on and then the second is the value. Since the comparison of tuple first compares the first value in the tuple the dht_dist becomes the value that is being compared for the value I want to store(the dht_peer object).</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/24/python-string-bit-iterator/">Python String Bit Iterator</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2012-09-24T22:55:00-07:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>10:55 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>My most recent project has been to implement a BitTorrent client (or maybe just part of one) and a <a href="http://en.wikipedia.org/wiki/Kademlia" title="Kademlia DHT">DHT</a> client! Really the BitTorrent client is just to support the DHT client. Anyhow, I found that in my DHT implementation re occuringly needed to take a string of bytes and iterate bit by bit through it accomplishing some task along the way.</p>
+
+<p>Now in Python 3 there are all kinds of cool tools to do this kind of thing but I am working in Python 2.7 . To accomplish my goal I used yield to create a generator iterator of a python string, that iterates bit by bit.</p>
+
+<pre><code>#Returns a iterator that will iterate bit by bit over a string!
+def string_bit_iterator(str_to_iterate):
+    bitmask = 128 #1 &lt;&lt; 7 or '0b10000000'
+    cur_char_index = 0
+
+    while cur_char_index &lt; len(str_to_iterate):
+        if bitmask &amp; ord(str_to_iterate[cur_char_index]):
+            yield 1
+        else:
+            yield 0
+
+        bitmask = bitmask &gt;&gt; 1
+        if bitmask == 0:
+            bitmask = 128 #1 &lt;&lt; 7 or '0b10000000'
+            cur_char_index = cur_char_index + 1
+</code></pre>
+
+<p>This is pretty self explanatory I hope. It just starts at the first byte in the string, with a bitmask with the most important big set and begins shifting the bit right, reseting and moving onto the next byte when needed.</p>
+
+<p>Heres some of the tests I wrote for this:</p>
+
+<pre><code>bit_iter = string_bit_iterator('\xff\xff\xff\xff\xff\xff\xff\xff')
+for b in bit_iter:
+    assert(b == 1)
+
+count = 0
+last = 0
+bit_iter = dhttornado.string_bit_iterator('\xaa') #0xAA is b10101010
+for b in bit_iter:
+    assert(b != last)
+    last = b
+    count = count + 1
+assert(count == 8)
+
+peer = new_node([0xAA,0xAA])
+for b in peer:
+    assert(b != last)
+    last = b
+</code></pre>
+
+<p>This was used for iterating over the bits in an info hash or 20 byte peer ID in my DHT implementation (which is on my github).</p>
+
+<p>Hopefully this takes care of some bitmasking/shifting for someone else..</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/24/opencl-on-ubuntu-1210/">Installing OpenCL and PyOpenCL on Ubuntu 12.10</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2012-09-24T22:47:00-07:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>10:47 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h1>The hassle of Intel OpenCL Dev</h1>
+
+<h2>Trying to mine some damn bitcoin</h2>
+
+<p>Fueled by the ridiculous BitCoin bubble and yes, I know, late to the game I decided I might as well start a bitcoin miner on an extra computer or two.</p>
+
+<p>What I didnt expect is the huge pain in the ass that was installing the Intel OpenCL libs/headers..</p>
+
+<p>Ill try to sum this up as quickly as possible:</p>
+
+<p>I started with <a href="http://develnoter.blogspot.com/2012/05/installing-opencl-in-ubuntu-1204.html">this guys blog entry on installing OpenCL on ubuntu</a> which</p>
+
+<p>This is directly from his site, slightly modified:</p>
+
+<hr />
+
+<ol>
+<li>Download the <a href="http://software.intel.com/en-us/articles/vcsource-tools-opencl-sdk/">Intel SDK for OpenCL Applications from Intel&rsquo;s web site</a>. The download options are not easy to spot in the messy page, they are on the top right bo. After downloading, you will end with a .tgz file with an RPM inside (crazy, I know).</li>
+</ol>
+
+
+<p>The guy who I stole this walk through from says he got the file :
+    intel_sdk_for_ocl_applications_2012_x64.tgz.
+NOTE!! I actually didnt see this option I downloaded the option with all the check marks for the beta that supported RedHat Linux. I got this file:
+    intel_sdk_for_ocl_applications_2013_xe_beta_sdk_3.0.56860_x64.tgz</p>
+
+<ol>
+<li>Extract the RPM from the .tgz file:
+ $ tar zxvf intel_sdk_for_ocl_applications_2012_x64.tgz</li>
+</ol>
+
+
+<p>This will extract the intel_ocl_sdk_2012_x64.rpm file.</p>
+
+<ol>
+<li>Convert the RPM file to .deb format and install:
+ $ sudo apt-get install -y rpm alien libnuma1    # In case you don&rsquo;t have these packages
+ $ fakeroot alien &ndash;to-deb intel_ocl_sdk_2012_x64.rpm</li>
+</ol>
+
+
+<p>The guy says to run:</p>
+
+<pre><code>$ sudo dpkg -i intel-ocl-sdk_2.0-31361_amd64.deb
+</code></pre>
+
+<p>However you will probably have 4 diff debs. I just ran the following to install them all:
+sudo dpkg -i *.deb</p>
+
+<ol>
+<li>Now the SDK and libraries will be installed to /usr/lib64, while Ubuntu expects them to be in /usr/lib. No problem, just make a symlink and update the library cache:
+ $ sudo ln -s /usr/lib64/libOpenCL.so /usr/lib/libOpenCL.so
+ $ sudo ldconfig</li>
+</ol>
+
+
+<p>That&rsquo;s it! OpenCL should be installed now. Let&rsquo;s try with a test program to see the device capabilities.</p>
+
+<pre><code>#include &lt;iostream&gt;
+#include &lt;CL/cl.hpp&gt;
+#include &lt;boost/foreach.hpp&gt;
+
+int main(int, char**) {
+ std::vector&lt;cl::Platform&gt; platforms;
+ cl::Platform::get(&amp;platforms);
+ BOOST_FOREACH(cl::Platform platform, platforms) {
+     std::cout &lt;&lt; "Platform: " &lt;&lt; platform.getInfo&lt;CL_PLATFORM_NAME&gt;() &lt;&lt; std::endl;
+     std::vector&lt;cl::Device&gt; devices;
+     platform.getDevices(CL_DEVICE_TYPE_GPU | CL_DEVICE_TYPE_CPU, &amp;devices);
+     BOOST_FOREACH(cl::Device device, devices) {
+         std::cout &lt;&lt; "Device: " &lt;&lt; device.getInfo&lt;CL_DEVICE_TYPE&gt;();
+         std::cout &lt;&lt; " (" &lt;&lt; CL_DEVICE_TYPE_GPU &lt;&lt; " means GPU, " &lt;&lt; CL_DEVICE_TYPE_CPU &lt;&lt; " means CPU)" &lt;&lt; std::endl;
+     }
+ }
+}
+</code></pre>
+
+<p>Save this snippet into opencl.cpp, compile and run:
+$ g++ opencl.cpp -lOpenCL -o opencl &amp;&amp; ./opencl
+Platform: Intel&reg; OpenCL
+Device: 2 (4 means GPU, 2 means CPU)
+This shows that this particular machine has one OpenCL-capable Intel CPU.</p>
+
+<hr />
+
+<p>So continuing on I basically kep trying to compile his example until it succesfully compiled and ran.</p>
+
+<p>So along with installing the libs I needed the headers to do this I made the following dir:</p>
+
+<pre><code>sudo mkdir -p /usr/local/cuda/include/CL
+cd /usr/local/cuda/include/CL
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl.hpp
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl.h
+sudo wget http://www.khronos.org/registry/cl/api/1.1/opencl.h
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl_platform.h
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl_gl.h
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl_gl_ext.h
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl_ext.h
+sudo chmod -R a+r /usr/local/cuda
+</code></pre>
+
+<p>If you are missing any other headers try looking for the file under the
+    <a href="http://www.khronos.org/registry/cl/api/1.1/">http://www.khronos.org/registry/cl/api/1.1/</a>
+directory..</p>
+
+<p>I also installed:</p>
+
+<p>sudo apt-get install libboost-all-dev python-setuptools python-numpy</p>
+
+<p>I actually installed numpy with pip but that should work too..</p>
+
+<p>I downloaded <a href="https://pypi.python.org/pypi/pyopencl">PyOpenCL</a> and ran
+    sudo python setup.py install
+however it couldnt find the headers.</p>
+
+<p>I actually just added the following line to setup.py, right before the line:
+    INCLUDE_DIRS = conf[&ldquo;BOOST_INC_DIR&rdquo;] + conf[&ldquo;CL_INC_DIR&rdquo;]
+I added:
+    conf[&ldquo;CL_INC_DIR&rdquo;] = [&lsquo;/usr/local/cuda/include/&rsquo;, &lsquo;/usr/local/cuda/include/CL&rsquo;]</p>
+
+<p>althouh you prob only need that first one..</p>
+
+<p>then running:
+    sudo python setup.py install
+worked great..</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/24/implementing-exception-logging-in-python/">Implementing Exception Logging in Python</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2012-09-24T22:47:00-07:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2012</span></span> <span class='time'>10:47 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>
+When tasked with logging all the exceptions that our software might encounter in the wild I tried a number of different techniques to log our python exception tracebacks. I ended up with an application that would take logs of a specific level and upload them to a server (in our case Loggly) where we could analyze them.
+</p>
+
+
+
+
+<p> The first hurdle was determing how I could install my own method to process and log ALL tracebacks happening in the application.
+</p>
+
+
+
+
+<p>
+At first I thought that the python system exception hook, <a href="http://docs.python.org/library/sys.html">sys.excepthook</a> would be the perfect place to insert the logging code. I was trying something similar to:
+</p>
+
+
+<pre>
+import traceback
+import StringIO
+import logging
+import os, sys
+
+def my_excepthook(excType, excValue, traceback, logger=logger):
+    logger.error("Logging an uncaught exception", exc_info=(excType, excValue, traceback))
+
+sys.excepthook = my_excepthook
+</pre>
+
+
+<p>
+This worked for the main thread but I soon found that the my sys.excepthook would not exist across any new threads my process started. This is a huge issue because most everything happens in threads in this project.
+</p>
+
+
+<p>
+After googling and reading plenty of documentation the most helpful information I found was from the <a href="http://bugs.python.org/issue1230540">Python Issue tracker</a>.
+</p>
+
+
+<p>
+The first post on the thread shows a working example of the sys.excepthook NOT persisting across threads (as shown below). Apparently this is expected behavior.
+</p>
+
+
+<pre>
+import sys, threading
+
+def log_exception(*args):
+    print 'got exception %s' % (args,)
+sys.excepthook = log_exception
+
+def foo():
+    a = 1 / 0
+threading.Thread(target=foo).start()
+</pre>
+
+
+
+
+<p>The messages on this Python Issue thread really result in 2 suggested hacks. Either subclass Thread and wrap the run method in our own try except block in order to catch and log exceptions or monkey patch threading.Thread.run to run in your own try except block and log the exceptions.</p>
+
+
+<p>The first method of subclassing Thread seems to me to be less elegant in your code as you would have to import and use your custom Thread class EVERYWHERE you wanted to have a logging thread. This ended up being a hassle because I had to search our entire code base and replace all normal Threads with this custom Thread. However, it was clear as to what this Thread was doing and would be easier for someone to diagnose and debug if something went wrong with the custom logging code. A custom logging thread might look like this: </p>
+
+
+
+
+<pre>
+class TracebackLoggingThread(threading.Thread):
+    def run(self):
+        try:
+            super(TracebackLoggingThread, self).run()
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except Exception, e:
+            logger = logging.getLogger('')
+            logger.exception("Logging an uncaught exception")
+</pre>
+
+
+
+
+<p>The second method of monkey patching threading.Thread.run is nice because I could just run it once right after __main__ and instrument my logging code in all exceptions. Monkey patching can be annoying to debug though as it changes the expected functionality without being obvious that this was done. The suggested patch from the Python Issue tracker was: </p>
+
+
+
+
+<pre>
+def installThreadExcepthook():
+    """
+    Workaround for sys.excepthook thread bug
+    From
+http://spyced.blogspot.com/2007/06/workaround-for-sysexcepthook-bug.html
+
+    Call once from __main__ before creating any threads.
+    If using psyco, call psyco.cannotcompile(threading.Thread.run)
+    since this replaces a new-style class method.
+    """
+    init_old = threading.Thread.__init__
+    def init(self, *args, **kwargs):
+        init_old(self, *args, **kwargs)
+        run_old = self.run
+        def run_with_except_hook(*args, **kw):
+            try:
+                run_old(*args, **kw)
+            except (KeyboardInterrupt, SystemExit):
+                raise
+            except:
+                sys.excepthook(*sys.exc_info())
+        self.run = run_with_except_hook
+    threading.Thread.__init__ = init
+</pre>
+
+
+
+
+<p>The main goal of creating somethign that could log any of our tracebacks was to send these tracebacks up a server where we could search through issues people were having in the wild and find bugs in our software.
+    It was not until I started testing my exception logging I realized that I was going about it all wrong.</p>
+
+
+
+
+<p>To test I had placed a <pre>raise Exception("Test")</pre> and/or a <pre>1/0</pre> somewhere in my code. However, wrapping a a method that called this method was a try except block that printed out the traceback and swallowed the exception. This was very frustrating because I saw the traceback bring printed using logging.error but not being processed by my custom exception handler. My exception handlers purpose was to take these tracebacks and ultimately upload them to a server. </p>
+
+
+
+
+<p>The final implementation consisted of a few different classes that looked something like this:</p>
+
+
+
+
+<pre>
+class CustomLoggingfThread(Thread):
+    def __init__(self, daemon_thread=False, group=None, target=None, name="LiveThread",
+                 args=(), kwargs={}, verbose=None, clean_up=None):
+        self.args = args
+        self.kwargs = kwargs
+
+        # This will make sure that the thread is wrapped in the try except block
+        #regardless of whather or not you extend the class are use the target invocation
+        #of Thread
+        if type(self) != LiveThread:
+            assert hasattr(self,"run")
+            self.target = self.run
+        else:
+            self.target = target
+        Thread.__init__(self, group=group, target=target, name=name,
+                 args=args, kwargs=kwargs, verbose=verbose)
+        self.run = self.__run
+        self.daemon = daemon_thread
+
+
+    def __run(self):
+        try:
+            self.target(*self.args, **self.kwargs)
+        except Exception:
+            logging.error("The thread %s raised an exception." % self.name, exc_info=True)
+            #We consider exiting our application here if its an important thread that crashed and can't
+            #be restarted.
+
+</pre>
+
+
+
+
+<p>
+As you can see, our custom logging thread became VERY simple. It just wraps the threaded function in a try except block and logs any tracebacks to logging.error
+</p>
+
+
+
+
+<p>This class is meant to be used in combination with our custom logging filter and handlers. The python Logging module provides some great tools to help you control what you do with your logging. My implementation looked something like this:
+</p>
+
+
+
+
+<pre>
+
+
+class CustomLoggingFilter(logging.Filter):
+    def filter(self, record):
+        return record.levelno >= logging.WARNING
+
+class CustomLogglyHttpHandler(hoover.LogglyHttpHandler):
+
+...
+    Removed some code to be brief..
+...
+
+    def emit(self, record):
+        if isinstance(record.msg, (list, dict)):
+            record.msg = dumps(record.msg, cls=self.json_class, default=str)
+        msg = self.format(record)
+        self.synchronous_loggly_post(msg)
+
+
+
+loggly_handler = CustomLogglyHttpHandler(.....some args....)
+loggly_handler.addFilter(CustomLoggingFilter())
+
+#Get the root logger so all log msgs run through our handler/filter
+loggly_logger = logging.getLogger('')
+loggly_logger.addHandler(loggly_handler)
+
+</pre>
+
+
+
+
+<p>
+The above code is really what puts this all together. It adds a logging handler to post only the log messages of a certian log level (via a filter) to the server.
+
+In the actuall implementation we do a few things such as buffering of the log messages as well. These were left out to keep the post short(er).
+</p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/index.html">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/11/05/ThinkPad-w530-nVidia-Divers/">Thinkpad W530 Nvidia Divers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/11/checking-out-sublime-text-3-binary-hex-diff-versus-cracked-version/">Checking Out Sublime Text 3 Binary Hex Diff Versus Cracked Version</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/10/Openstack-RDO-CentOS-Error/">Openstack Rdo Centos Error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/15/pycon/">How to Record Live Video From PyCon</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/12/ubuntu1210/">Ubuntu(Kubuntu) Web Pages Load Painfully Slow</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/bbarrows">@bbarrows</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'bbarrows',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Brad Barrows -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

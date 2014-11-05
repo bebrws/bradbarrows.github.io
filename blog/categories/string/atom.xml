@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: String | Haxin Mainframes]]></title>
+  <link href="http://bbarrows.github.com/blog/categories/string/atom.xml" rel="self"/>
+  <link href="http://bbarrows.github.com/"/>
+  <updated>2014-11-05T14:12:14-08:00</updated>
+  <id>http://bbarrows.github.com/</id>
+  <author>
+    <name><![CDATA[Brad Barrows]]></name>
+    <email><![CDATA[bradleyb1537@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Random Idea About Language Implementation and Strings]]></title>
+    <link href="http://bbarrows.github.com/blog/2012/10/29/string-idea/"/>
+    <updated>2012-10-29T22:30:00-07:00</updated>
+    <id>http://bbarrows.github.com/blog/2012/10/29/string-idea</id>
+    <content type="html"><![CDATA[<p>I was reading this awesome post about why this guy <a href="http://www.evanmiller.org/why-i-program-in-erlang.html">appreciates erlang</a>.</p>
+
+<p>And this paragraph caught my eye.</p>
+
+<hr />
+
+<p>Or take string concatenation. If you pop open the implementation of string concatenation in Perl, Ruby, or JavaScript, you&rsquo;ll are certain to find an if statement, a realloc, and a memcpy. That is, when you concatenate two strings, the first string is grown to make room for the second, and then the second is copied into the first. This approach has worked for decades and is the “obvious” thing to do. Erlang&rsquo;s approach is non-obvious, and, I believe, correct. Erlang does not use a contiguous chunk of memory to represent a sequence of bytes. Instead, it represents a sequence of bytes as nested lists of non-contiguous chunks of memory. The result is that concatenating two strings takes O(1) time in Erlang, compared O(N) time in other languages. This is why template rendering in Ruby, Python, etc. is slow, but very fast in Erlang.</p>
+
+<hr />
+
+<p>I just thought it would be a cool little mini project to try and re implement Python and or Ruby strings to act like Erlang strings (the linked list of bytes versus contiguous). I am kind of using this as a note to myself since writing things down in other places just gets lost a lot of the time..</p>
+
+<p>It would be cool to do this though and then compare the new ruby build with the previous in a bunch of different speed string tests.</p>
+
+<p>After talking to some friends at work I realized that this already done. Using the rope data structure. A cool implementation, <a href="https://github.com/josephg/librope">librope</a> is a very interesting read.</p>
+
+<p>After checking the librope implementation out I realized that using these strings would only be a benfit in very specific situations, long modifiable strings.</p>
+
+<p>However, having an implementation accessbile in a standard library would deff be a cool thing to have. I could see this being super helpful when doing something like building a website response from templates.</p>
+
+<p>Actually from a quick google it sounds like this is how PyPy implemented strings.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Python String Bit Iterator]]></title>
+    <link href="http://bbarrows.github.com/blog/2012/09/24/python-string-bit-iterator/"/>
+    <updated>2012-09-24T22:55:00-07:00</updated>
+    <id>http://bbarrows.github.com/blog/2012/09/24/python-string-bit-iterator</id>
+    <content type="html"><![CDATA[<p>My most recent project has been to implement a BitTorrent client (or maybe just part of one) and a <a href="http://en.wikipedia.org/wiki/Kademlia" title="Kademlia DHT">DHT</a> client! Really the BitTorrent client is just to support the DHT client. Anyhow, I found that in my DHT implementation re occuringly needed to take a string of bytes and iterate bit by bit through it accomplishing some task along the way.</p>
+
+<p>Now in Python 3 there are all kinds of cool tools to do this kind of thing but I am working in Python 2.7 . To accomplish my goal I used yield to create a generator iterator of a python string, that iterates bit by bit.</p>
+
+<pre><code>#Returns a iterator that will iterate bit by bit over a string!
+def string_bit_iterator(str_to_iterate):
+    bitmask = 128 #1 &lt;&lt; 7 or '0b10000000'
+    cur_char_index = 0
+
+    while cur_char_index &lt; len(str_to_iterate):
+        if bitmask &amp; ord(str_to_iterate[cur_char_index]):
+            yield 1
+        else:
+            yield 0
+
+        bitmask = bitmask &gt;&gt; 1
+        if bitmask == 0:
+            bitmask = 128 #1 &lt;&lt; 7 or '0b10000000'
+            cur_char_index = cur_char_index + 1
+</code></pre>
+
+<p>This is pretty self explanatory I hope. It just starts at the first byte in the string, with a bitmask with the most important big set and begins shifting the bit right, reseting and moving onto the next byte when needed.</p>
+
+<p>Heres some of the tests I wrote for this:</p>
+
+<pre><code>bit_iter = string_bit_iterator('\xff\xff\xff\xff\xff\xff\xff\xff')
+for b in bit_iter:
+    assert(b == 1)
+
+count = 0
+last = 0
+bit_iter = dhttornado.string_bit_iterator('\xaa') #0xAA is b10101010
+for b in bit_iter:
+    assert(b != last)
+    last = b
+    count = count + 1
+assert(count == 8)
+
+peer = new_node([0xAA,0xAA])
+for b in peer:
+    assert(b != last)
+    last = b
+</code></pre>
+
+<p>This was used for iterating over the bits in an info hash or 20 byte peer ID in my DHT implementation (which is on my github).</p>
+
+<p>Hopefully this takes care of some bitmasking/shifting for someone else..</p>
+]]></content>
+  </entry>
+  
+</feed>

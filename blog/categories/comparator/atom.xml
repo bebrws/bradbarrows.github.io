@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Comparator | Haxin Mainframes]]></title>
+  <link href="http://bbarrows.github.com/blog/categories/comparator/atom.xml" rel="self"/>
+  <link href="http://bbarrows.github.com/"/>
+  <updated>2014-11-05T14:12:14-08:00</updated>
+  <id>http://bbarrows.github.com/</id>
+  <author>
+    <name><![CDATA[Brad Barrows]]></name>
+    <email><![CDATA[bradleyb1537@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Python Min Heap and Comparators]]></title>
+    <link href="http://bbarrows.github.com/blog/2012/09/24/python-min-heap-and-comparators/"/>
+    <updated>2012-09-24T23:22:00-07:00</updated>
+    <id>http://bbarrows.github.com/blog/2012/09/24/python-min-heap-and-comparators</id>
+    <content type="html"><![CDATA[<p>You know what really grinds my gears?!? Not being able to easily create a min heap in Python 2.7.</p>
+
+<p>Actually its not that bad. But it would be nice if you could specify a Comparator or something similar like Java. For example, check the <a href="http://docs.oracle.com/javase/1.4.2/docs/api/java/util/TreeSet.html" title="Java TreeSet Class">TreeSet</a> Class. The constructor takes an object the implements the Comparator interface which means that it acts like the Python magic method <a href="http://www.rafekettler.com/magicmethods.html"><strong>cmp</strong></a>.</p>
+
+<p>This is awesome because you can easily specify how you want to compare the objects in your heap. Normally you probably just want to compare objects against one another. This makes sense in 90% of situations. However, in my super awesome DHT project I needed to keep a list of the top N number of nodes I had recieved from my queries in order. The order I needed was from smallest to largest DHT Distance deom myself to them.</p>
+
+<p>In the <a href="http://en.wikipedia.org/wiki/Kademlia" title="Kademlia DHT">Kademlia DHT</a> the distance between two nodes is calculated by XORing each ndoes id. Therefore, to find which of two nodes is closest to me I need to compare each nodes id after xoring it with my own.</p>
+
+<p>The first idea that comes to mind is to just override my DHTPeer objects cmp method however that wouldn&rsquo;t make sense in any other sitaution when I wanted to comapre two peers.</p>
+
+<p>In order to get around this I settled with using tuples.</p>
+
+<p>I simply heappush a tuple of the metric (DHT distance) I want ot sort on and the object I really want to keep track of in the first place. This way I don&rsquo;t need to mess with the object I want sorted in my heap and I can sort whichever way I want.</p>
+
+<p>Here is an example of how I am using it:</p>
+
+<pre><code>#Part of a class from my project
+class NodeListHeap(object):
+    CONTACT_LIST_LENGTH = 5
+    def __init__(self, dht_node_id):
+        self.dht_node_id = dht_node_id
+        self.node_heap = []
+
+    def push(self, dht_peer):
+        heappush(self.node_heap, (dht_dist(self.dht_node_id, dht_peer.id), dht_peer))
+</code></pre>
+
+<p>The first argument of heappush is the heap you are pushing on and then the second is the value. Since the comparison of tuple first compares the first value in the tuple the dht_dist becomes the value that is being compared for the value I want to store(the dht_peer object).</p>
+]]></content>
+  </entry>
+  
+</feed>

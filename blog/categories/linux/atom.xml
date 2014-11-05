@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Linux | Haxin Mainframes]]></title>
+  <link href="http://bbarrows.github.com/blog/categories/linux/atom.xml" rel="self"/>
+  <link href="http://bbarrows.github.com/"/>
+  <updated>2014-11-05T14:12:14-08:00</updated>
+  <id>http://bbarrows.github.com/</id>
+  <author>
+    <name><![CDATA[Brad Barrows]]></name>
+    <email><![CDATA[bradleyb1537@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ubuntu(Kubuntu) Web Pages Load Painfully Slow]]></title>
+    <link href="http://bbarrows.github.com/blog/2013/02/12/ubuntu1210/"/>
+    <updated>2013-02-12T22:30:00-08:00</updated>
+    <id>http://bbarrows.github.com/blog/2013/02/12/ubuntu1210</id>
+    <content type="html"><![CDATA[<p>My new Laptop from work, I recently started a new job at a company called Virtustream, was loaded with Ubuntu (Kubuntu I believe actually since its running KDE and I do not think that is the default with Ubuntu?) which was fine, I like the aptitude package manager, however I noticed that web pages loaded PAINFULLY SLOW. I tried anumber of things but when I saw that it was really new sites that I hadn&rsquo;t yet visited that were loading slowly I guessed DNS.</p>
+
+<p>Upon googling Ubuntu 12.10 DNS I saw there were a number of people complaining. I decided to give it a try and set my /etc/resolv.conf to Google&rsquo;s DNS servers:</p>
+
+<pre><code>nameserver 8.8.8.8
+nameserver 8.8.4.4
+</code></pre>
+
+<p>And now it runs like charm..</p>
+]]></content>
+  </entry>
+  
+</feed>

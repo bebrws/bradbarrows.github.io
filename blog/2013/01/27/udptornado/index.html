@@ -1,0 +1,368 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Using UDP in the Python Tornado Framework - Haxin Mainframes</title>
+  <meta name="author" content="Brad Barrows">
+
+  
+  <meta name="description" content="A little while ago I was working on an API endpoint that needed to ask the BitTorrent Live video streaming trackers how many people were watching &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bbarrows.github.com/blog/2013/01/27/udptornado">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Haxin Mainframes" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-22887221-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Haxin Mainframes</a></h1>
+  
+    <h2>A blog about stuff I do, find interesting, or want to blab about..</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:bbarrows.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Using UDP in the Python Tornado Framework</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2013-01-27T12:48:00-08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>27</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>12:48 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>A little while ago I was working on an API endpoint that needed to ask the BitTorrent Live video streaming trackers how many people were watching what swarms. I needed to do this by sending the byte 4 to the tracker on a certain ip and port. We were using Tornado. Previously to use UDP sockets with the Tornado event loop (in my python DHT project for example) I just created a non blocking UDP socket and added a handler for the READ state.</p>
+
+<pre><code>self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+self.io_loop.add_handler(self.sock.fileno(), self.handle_input, self.io_loop.READ)
+
+udpsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+udpsock.setblocking(0)
+</code></pre>
+
+<p>The callback for this handler looked like this:</p>
+
+<pre><code>def handle_input(self, fd, events):
+    (data, source_ip_port) = self.sock.recvfrom(4096)
+    bdict = bdecode(data)
+
+    #Got a response from some previous query
+    if bdict["y"] == "r":
+        self.handle_response(bdict, source_ip_port)
+
+    #Porb gonna have to ad a listenr socket
+    #Got a query for something
+    if bdict["y"] == "q":
+        self.handle_query(bdict, source_ip_port)
+</code></pre>
+
+<p>I believe this is an appropriate way to handle UDP sockets in Tornado (as the library only comes with TCP/HTTP based clients I know of..). However my friend <a href="http://kyle.graehl.org/">Kyle Grahel</a> put together a nice <a href="http://kyle.graehl.org/coding/2012/12/07/tornado-udpstream.html">UDP Wrapper</a> class that is much closer to and even takes methods from the general Tornado IOStream class.</p>
+
+<p>Using the UDPWrapper I was able to do something like this (I actually added an enter and exit for the with however I am not sure if its actually very pythonic to do it that way versus try finally):</p>
+
+<pre><code>udpsockwrapper = UDPSockWrapper(udpsock, in_ioloop=io_loop)
+response = None
+with udpsockwrapper:
+    udpsockwrapper.sendto(chr(4), (tracker_ip, int(tracker_port)))
+    response = yield gen.Task(udpsockwrapper.read_chunk)
+</code></pre>
+
+<p>You may notice the yield gen.Task above? This is using Tornado&rsquo;s awesome gen library. It basically allows you to turn your functions into generators which the event loop basically iterates through as it hits your callbacks. This allows you to take your nested callback code and turn it into a synchronous style. I believe this is similar to the Deferred class you yield with in the Twisted framework.</p>
+
+<p>My modified version of the UDPWrapper:</p>
+
+<pre><code>import tornado, time
+
+#From Kyle Grahel - http://kyle.graehl.org/
+#The __enter__ and __exit__ are added by me.. probably not the best way to use
+#these though..
+class UDPSockWrapper(object):
+    def __enter__(self):
+        return
+
+    def __exit__(self, type, value, traceback):
+        self.close()
+
+    def __init__(self, socket, in_ioloop=None):
+        self.socket = socket
+        self._state = None
+        self._read_callback = None
+        self.ioloop = in_ioloop or tornado.ioloop.IOLoop.instance()
+
+    def __repr__(self):
+        return "&lt;UDPSockWrap:%s,rc:%s&gt;" % (self.socket.fileno(), self._read_callback)
+
+    def _add_io_state(self, state):
+        if self._state is None:
+            self._state = tornado.ioloop.IOLoop.ERROR | state
+            #with stack_context.NullContext():
+            self.ioloop.add_handler(
+                self.socket.fileno(), self._handle_events, self._state)
+        elif not self._state &amp; state:
+            self._state = self._state | state
+            self.ioloop.update_handler(self.socket.fileno(), self._state)
+
+    def sendto(self, msg, dest):
+        return self.socket.sendto(msg, dest)
+
+    def recv(self,sz):
+        return self.socket.recv(sz)
+
+    def close(self):
+        self.ioloop.remove_handler(self.socket.fileno())
+        self.socket.close()
+        self.socket = None
+
+    def read_chunk(self, callback=None, timeout=4):
+        self._read_callback = callback
+        self._read_timeout = self.ioloop.add_timeout( time.time() + timeout, 
+            self.check_read_callback )
+        self._add_io_state(self.ioloop.READ)
+
+    def check_read_callback(self):
+        if self._read_callback:
+            # XXX close socket?
+            #data = self.socket.recv(4096)
+            self._read_callback(None, error='timeout')
+
+    def _handle_read(self):
+        if self._read_timeout:
+            self.ioloop.remove_timeout(self._read_timeout)
+        if self._read_callback:
+            try:
+                data = self.socket.recv(4096)
+            except:
+                # conn refused??
+                data = None
+            self._read_callback(data);
+            self._read_callback = None
+
+    def _handle_events(self, fd, events):
+        if events &amp; self.ioloop.READ:
+            self._handle_read()
+        if events &amp; self.ioloop.ERROR:
+            logging.error('%s event error' % self)
+</code></pre>
+
+<p>Another side note is that read_chunk above has the keyword argument callback. This is a requirement for the gen.Task class. The function that it executes should have a keyword argument callback=None. In order to convert any function to a function with this callback kwarg I used this lambda:</p>
+
+<pre><code>lambda **kwargs: db.get_item('users', {"HashKeyElement": {"S": username}}, kwargs['callback'])
+</code></pre>
+
+<p>You can then use them in gen.Task:</p>
+
+<pre><code>yield gen.Task(
+            lambda **kwargs: db.get_item('users', {"HashKeyElement": {"S": username}}, kwargs['callback']))
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Brad Barrows</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2013-01-27T12:48:00-08:00'><span class='date'><span class='date-month'>Jan</span> <span class='date-day'>27</span><span class='date-suffix'>th</span>, <span class='date-year'>2013</span></span> <span class='time'>12:48 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/programming/'>programming</a>, <a class='category' href='/blog/categories/python/'>python</a>, <a class='category' href='/blog/categories/tornado/'>tornado</a>, <a class='category' href='/blog/categories/udp/'>udp</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://bbarrows.github.com/blog/2013/01/27/udptornado/" data-via="" data-counturl="http://bbarrows.github.com/blog/2013/01/27/udptornado/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/01/27/sublimeconsole/" title="Previous Post: Open file from console python traceback in text editor">&laquo; Open file from console python traceback in text editor</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/02/12/ubuntu1210/" title="Next Post: Ubuntu(Kubuntu) web pages load painfully slow">Ubuntu(Kubuntu) web pages load painfully slow &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/11/05/ThinkPad-w530-nVidia-Divers/">Thinkpad W530 Nvidia Divers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/11/checking-out-sublime-text-3-binary-hex-diff-versus-cracked-version/">Checking Out Sublime Text 3 Binary Hex Diff Versus Cracked Version</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/09/10/Openstack-RDO-CentOS-Error/">Openstack Rdo Centos Error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/15/pycon/">How to Record Live Video From PyCon</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/12/ubuntu1210/">Ubuntu(Kubuntu) Web Pages Load Painfully Slow</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/bbarrows">@bbarrows</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'bbarrows',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Brad Barrows -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

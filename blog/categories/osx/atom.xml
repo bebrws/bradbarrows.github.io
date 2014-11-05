@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Osx | Haxin Mainframes]]></title>
+  <link href="http://bbarrows.github.com/blog/categories/osx/atom.xml" rel="self"/>
+  <link href="http://bbarrows.github.com/"/>
+  <updated>2014-11-05T14:12:14-08:00</updated>
+  <id>http://bbarrows.github.com/</id>
+  <author>
+    <name><![CDATA[Brad Barrows]]></name>
+    <email><![CDATA[bradleyb1537@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Open File From Console Python Traceback in Text Editor]]></title>
+    <link href="http://bbarrows.github.com/blog/2013/01/27/sublimeconsole/"/>
+    <updated>2013-01-27T12:48:00-08:00</updated>
+    <id>http://bbarrows.github.com/blog/2013/01/27/sublimeconsole</id>
+    <content type="html"><![CDATA[<p>Often when I am programming I want to be able to quickly find a function/class definition when I hit a traceback. My normal dev environment is basically just Sublime Text 2 and the OSX console. My Co-Worker Brahm Cohan figured out a cool trick the other day from one of his friends I believe.</p>
+
+<p>Basically, you:</p>
+
+<p>Open, the Automator app. Create a new &ldquo;Service&rdquo;.</p>
+
+<p><img src="/images/automator.png" alt="Service Project in Automator" /></p>
+
+<p>The service should execute the following (you can replace Sublime with whatever editor you use):</p>
+
+<p>open -a Sublime\ Text\ 2 $1</p>
+
+<p><img src="/images/service.png" alt="Sublime Text command" /></p>
+
+<p>Then open up System Preferences. Goto Keyboard under the Keyboard Shortcuts menu scroll down to find your new service. I named mine tosublime and set the Command-L combo to run it.</p>
+
+<p><img src="/images/preferences.png" alt="Perferences Keyboard window" /></p>
+
+<p>Now I can select the absolute path of a file in my python tracebacks and hit Command L. This opens up the file I need to start debugging in. With a little more work I am sure you could parse out the line number too.</p>
+]]></content>
+  </entry>
+  
+</feed>

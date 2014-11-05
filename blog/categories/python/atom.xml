@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Python | Haxin Mainframes]]></title>
+  <link href="http://bbarrows.github.com/blog/categories/python/atom.xml" rel="self"/>
+  <link href="http://bbarrows.github.com/"/>
+  <updated>2014-11-05T14:12:14-08:00</updated>
+  <id>http://bbarrows.github.com/</id>
+  <author>
+    <name><![CDATA[Brad Barrows]]></name>
+    <email><![CDATA[bradleyb1537@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using UDP in the Python Tornado Framework]]></title>
+    <link href="http://bbarrows.github.com/blog/2013/01/27/udptornado/"/>
+    <updated>2013-01-27T12:48:00-08:00</updated>
+    <id>http://bbarrows.github.com/blog/2013/01/27/udptornado</id>
+    <content type="html"><![CDATA[<p>A little while ago I was working on an API endpoint that needed to ask the BitTorrent Live video streaming trackers how many people were watching what swarms. I needed to do this by sending the byte 4 to the tracker on a certain ip and port. We were using Tornado. Previously to use UDP sockets with the Tornado event loop (in my python DHT project for example) I just created a non blocking UDP socket and added a handler for the READ state.</p>
+
+<pre><code>self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+self.io_loop.add_handler(self.sock.fileno(), self.handle_input, self.io_loop.READ)
+
+udpsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+udpsock.setblocking(0)
+</code></pre>
+
+<p>The callback for this handler looked like this:</p>
+
+<pre><code>def handle_input(self, fd, events):
+    (data, source_ip_port) = self.sock.recvfrom(4096)
+    bdict = bdecode(data)
+
+    #Got a response from some previous query
+    if bdict["y"] == "r":
+        self.handle_response(bdict, source_ip_port)
+
+    #Porb gonna have to ad a listenr socket
+    #Got a query for something
+    if bdict["y"] == "q":
+        self.handle_query(bdict, source_ip_port)
+</code></pre>
+
+<p>I believe this is an appropriate way to handle UDP sockets in Tornado (as the library only comes with TCP/HTTP based clients I know of..). However my friend <a href="http://kyle.graehl.org/">Kyle Grahel</a> put together a nice <a href="http://kyle.graehl.org/coding/2012/12/07/tornado-udpstream.html">UDP Wrapper</a> class that is much closer to and even takes methods from the general Tornado IOStream class.</p>
+
+<p>Using the UDPWrapper I was able to do something like this (I actually added an enter and exit for the with however I am not sure if its actually very pythonic to do it that way versus try finally):</p>
+
+<pre><code>udpsockwrapper = UDPSockWrapper(udpsock, in_ioloop=io_loop)
+response = None
+with udpsockwrapper:
+    udpsockwrapper.sendto(chr(4), (tracker_ip, int(tracker_port)))
+    response = yield gen.Task(udpsockwrapper.read_chunk)
+</code></pre>
+
+<p>You may notice the yield gen.Task above? This is using Tornado&rsquo;s awesome gen library. It basically allows you to turn your functions into generators which the event loop basically iterates through as it hits your callbacks. This allows you to take your nested callback code and turn it into a synchronous style. I believe this is similar to the Deferred class you yield with in the Twisted framework.</p>
+
+<p>My modified version of the UDPWrapper:</p>
+
+<pre><code>import tornado, time
+
+#From Kyle Grahel - http://kyle.graehl.org/
+#The __enter__ and __exit__ are added by me.. probably not the best way to use
+#these though..
+class UDPSockWrapper(object):
+    def __enter__(self):
+        return
+
+    def __exit__(self, type, value, traceback):
+        self.close()
+
+    def __init__(self, socket, in_ioloop=None):
+        self.socket = socket
+        self._state = None
+        self._read_callback = None
+        self.ioloop = in_ioloop or tornado.ioloop.IOLoop.instance()
+
+    def __repr__(self):
+        return "&lt;UDPSockWrap:%s,rc:%s&gt;" % (self.socket.fileno(), self._read_callback)
+
+    def _add_io_state(self, state):
+        if self._state is None:
+            self._state = tornado.ioloop.IOLoop.ERROR | state
+            #with stack_context.NullContext():
+            self.ioloop.add_handler(
+                self.socket.fileno(), self._handle_events, self._state)
+        elif not self._state &amp; state:
+            self._state = self._state | state
+            self.ioloop.update_handler(self.socket.fileno(), self._state)
+
+    def sendto(self, msg, dest):
+        return self.socket.sendto(msg, dest)
+
+    def recv(self,sz):
+        return self.socket.recv(sz)
+
+    def close(self):
+        self.ioloop.remove_handler(self.socket.fileno())
+        self.socket.close()
+        self.socket = None
+
+    def read_chunk(self, callback=None, timeout=4):
+        self._read_callback = callback
+        self._read_timeout = self.ioloop.add_timeout( time.time() + timeout, 
+            self.check_read_callback )
+        self._add_io_state(self.ioloop.READ)
+
+    def check_read_callback(self):
+        if self._read_callback:
+            # XXX close socket?
+            #data = self.socket.recv(4096)
+            self._read_callback(None, error='timeout')
+
+    def _handle_read(self):
+        if self._read_timeout:
+            self.ioloop.remove_timeout(self._read_timeout)
+        if self._read_callback:
+            try:
+                data = self.socket.recv(4096)
+            except:
+                # conn refused??
+                data = None
+            self._read_callback(data);
+            self._read_callback = None
+
+    def _handle_events(self, fd, events):
+        if events &amp; self.ioloop.READ:
+            self._handle_read()
+        if events &amp; self.ioloop.ERROR:
+            logging.error('%s event error' % self)
+</code></pre>
+
+<p>Another side note is that read_chunk above has the keyword argument callback. This is a requirement for the gen.Task class. The function that it executes should have a keyword argument callback=None. In order to convert any function to a function with this callback kwarg I used this lambda:</p>
+
+<pre><code>lambda **kwargs: db.get_item('users', {"HashKeyElement": {"S": username}}, kwargs['callback'])
+</code></pre>
+
+<p>You can then use them in gen.Task:</p>
+
+<pre><code>yield gen.Task(
+            lambda **kwargs: db.get_item('users', {"HashKeyElement": {"S": username}}, kwargs['callback']))
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Open File From Console Python Traceback in Text Editor]]></title>
+    <link href="http://bbarrows.github.com/blog/2013/01/27/sublimeconsole/"/>
+    <updated>2013-01-27T12:48:00-08:00</updated>
+    <id>http://bbarrows.github.com/blog/2013/01/27/sublimeconsole</id>
+    <content type="html"><![CDATA[<p>Often when I am programming I want to be able to quickly find a function/class definition when I hit a traceback. My normal dev environment is basically just Sublime Text 2 and the OSX console. My Co-Worker Brahm Cohan figured out a cool trick the other day from one of his friends I believe.</p>
+
+<p>Basically, you:</p>
+
+<p>Open, the Automator app. Create a new &ldquo;Service&rdquo;.</p>
+
+<p><img src="/images/automator.png" alt="Service Project in Automator" /></p>
+
+<p>The service should execute the following (you can replace Sublime with whatever editor you use):</p>
+
+<p>open -a Sublime\ Text\ 2 $1</p>
+
+<p><img src="/images/service.png" alt="Sublime Text command" /></p>
+
+<p>Then open up System Preferences. Goto Keyboard under the Keyboard Shortcuts menu scroll down to find your new service. I named mine tosublime and set the Command-L combo to run it.</p>
+
+<p><img src="/images/preferences.png" alt="Perferences Keyboard window" /></p>
+
+<p>Now I can select the absolute path of a file in my python tracebacks and hit Command L. This opens up the file I need to start debugging in. With a little more work I am sure you could parse out the line number too.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Python Min Heap and Comparators]]></title>
+    <link href="http://bbarrows.github.com/blog/2012/09/24/python-min-heap-and-comparators/"/>
+    <updated>2012-09-24T23:22:00-07:00</updated>
+    <id>http://bbarrows.github.com/blog/2012/09/24/python-min-heap-and-comparators</id>
+    <content type="html"><![CDATA[<p>You know what really grinds my gears?!? Not being able to easily create a min heap in Python 2.7.</p>
+
+<p>Actually its not that bad. But it would be nice if you could specify a Comparator or something similar like Java. For example, check the <a href="http://docs.oracle.com/javase/1.4.2/docs/api/java/util/TreeSet.html" title="Java TreeSet Class">TreeSet</a> Class. The constructor takes an object the implements the Comparator interface which means that it acts like the Python magic method <a href="http://www.rafekettler.com/magicmethods.html"><strong>cmp</strong></a>.</p>
+
+<p>This is awesome because you can easily specify how you want to compare the objects in your heap. Normally you probably just want to compare objects against one another. This makes sense in 90% of situations. However, in my super awesome DHT project I needed to keep a list of the top N number of nodes I had recieved from my queries in order. The order I needed was from smallest to largest DHT Distance deom myself to them.</p>
+
+<p>In the <a href="http://en.wikipedia.org/wiki/Kademlia" title="Kademlia DHT">Kademlia DHT</a> the distance between two nodes is calculated by XORing each ndoes id. Therefore, to find which of two nodes is closest to me I need to compare each nodes id after xoring it with my own.</p>
+
+<p>The first idea that comes to mind is to just override my DHTPeer objects cmp method however that wouldn&rsquo;t make sense in any other sitaution when I wanted to comapre two peers.</p>
+
+<p>In order to get around this I settled with using tuples.</p>
+
+<p>I simply heappush a tuple of the metric (DHT distance) I want ot sort on and the object I really want to keep track of in the first place. This way I don&rsquo;t need to mess with the object I want sorted in my heap and I can sort whichever way I want.</p>
+
+<p>Here is an example of how I am using it:</p>
+
+<pre><code>#Part of a class from my project
+class NodeListHeap(object):
+    CONTACT_LIST_LENGTH = 5
+    def __init__(self, dht_node_id):
+        self.dht_node_id = dht_node_id
+        self.node_heap = []
+
+    def push(self, dht_peer):
+        heappush(self.node_heap, (dht_dist(self.dht_node_id, dht_peer.id), dht_peer))
+</code></pre>
+
+<p>The first argument of heappush is the heap you are pushing on and then the second is the value. Since the comparison of tuple first compares the first value in the tuple the dht_dist becomes the value that is being compared for the value I want to store(the dht_peer object).</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Python String Bit Iterator]]></title>
+    <link href="http://bbarrows.github.com/blog/2012/09/24/python-string-bit-iterator/"/>
+    <updated>2012-09-24T22:55:00-07:00</updated>
+    <id>http://bbarrows.github.com/blog/2012/09/24/python-string-bit-iterator</id>
+    <content type="html"><![CDATA[<p>My most recent project has been to implement a BitTorrent client (or maybe just part of one) and a <a href="http://en.wikipedia.org/wiki/Kademlia" title="Kademlia DHT">DHT</a> client! Really the BitTorrent client is just to support the DHT client. Anyhow, I found that in my DHT implementation re occuringly needed to take a string of bytes and iterate bit by bit through it accomplishing some task along the way.</p>
+
+<p>Now in Python 3 there are all kinds of cool tools to do this kind of thing but I am working in Python 2.7 . To accomplish my goal I used yield to create a generator iterator of a python string, that iterates bit by bit.</p>
+
+<pre><code>#Returns a iterator that will iterate bit by bit over a string!
+def string_bit_iterator(str_to_iterate):
+    bitmask = 128 #1 &lt;&lt; 7 or '0b10000000'
+    cur_char_index = 0
+
+    while cur_char_index &lt; len(str_to_iterate):
+        if bitmask &amp; ord(str_to_iterate[cur_char_index]):
+            yield 1
+        else:
+            yield 0
+
+        bitmask = bitmask &gt;&gt; 1
+        if bitmask == 0:
+            bitmask = 128 #1 &lt;&lt; 7 or '0b10000000'
+            cur_char_index = cur_char_index + 1
+</code></pre>
+
+<p>This is pretty self explanatory I hope. It just starts at the first byte in the string, with a bitmask with the most important big set and begins shifting the bit right, reseting and moving onto the next byte when needed.</p>
+
+<p>Heres some of the tests I wrote for this:</p>
+
+<pre><code>bit_iter = string_bit_iterator('\xff\xff\xff\xff\xff\xff\xff\xff')
+for b in bit_iter:
+    assert(b == 1)
+
+count = 0
+last = 0
+bit_iter = dhttornado.string_bit_iterator('\xaa') #0xAA is b10101010
+for b in bit_iter:
+    assert(b != last)
+    last = b
+    count = count + 1
+assert(count == 8)
+
+peer = new_node([0xAA,0xAA])
+for b in peer:
+    assert(b != last)
+    last = b
+</code></pre>
+
+<p>This was used for iterating over the bits in an info hash or 20 byte peer ID in my DHT implementation (which is on my github).</p>
+
+<p>Hopefully this takes care of some bitmasking/shifting for someone else..</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Installing OpenCL and PyOpenCL on Ubuntu 12.10]]></title>
+    <link href="http://bbarrows.github.com/blog/2012/09/24/opencl-on-ubuntu-1210/"/>
+    <updated>2012-09-24T22:47:00-07:00</updated>
+    <id>http://bbarrows.github.com/blog/2012/09/24/opencl-on-ubuntu-1210</id>
+    <content type="html"><![CDATA[<h1>The hassle of Intel OpenCL Dev</h1>
+
+<h2>Trying to mine some damn bitcoin</h2>
+
+<p>Fueled by the ridiculous BitCoin bubble and yes, I know, late to the game I decided I might as well start a bitcoin miner on an extra computer or two.</p>
+
+<p>What I didnt expect is the huge pain in the ass that was installing the Intel OpenCL libs/headers..</p>
+
+<p>Ill try to sum this up as quickly as possible:</p>
+
+<p>I started with <a href="http://develnoter.blogspot.com/2012/05/installing-opencl-in-ubuntu-1204.html">this guys blog entry on installing OpenCL on ubuntu</a> which</p>
+
+<p>This is directly from his site, slightly modified:</p>
+
+<hr />
+
+<ol>
+<li>Download the <a href="http://software.intel.com/en-us/articles/vcsource-tools-opencl-sdk/">Intel SDK for OpenCL Applications from Intel&rsquo;s web site</a>. The download options are not easy to spot in the messy page, they are on the top right bo. After downloading, you will end with a .tgz file with an RPM inside (crazy, I know).</li>
+</ol>
+
+
+<p>The guy who I stole this walk through from says he got the file :
+    intel_sdk_for_ocl_applications_2012_x64.tgz.
+NOTE!! I actually didnt see this option I downloaded the option with all the check marks for the beta that supported RedHat Linux. I got this file:
+    intel_sdk_for_ocl_applications_2013_xe_beta_sdk_3.0.56860_x64.tgz</p>
+
+<ol>
+<li>Extract the RPM from the .tgz file:
+ $ tar zxvf intel_sdk_for_ocl_applications_2012_x64.tgz</li>
+</ol>
+
+
+<p>This will extract the intel_ocl_sdk_2012_x64.rpm file.</p>
+
+<ol>
+<li>Convert the RPM file to .deb format and install:
+ $ sudo apt-get install -y rpm alien libnuma1    # In case you don&rsquo;t have these packages
+ $ fakeroot alien &ndash;to-deb intel_ocl_sdk_2012_x64.rpm</li>
+</ol>
+
+
+<p>The guy says to run:</p>
+
+<pre><code>$ sudo dpkg -i intel-ocl-sdk_2.0-31361_amd64.deb
+</code></pre>
+
+<p>However you will probably have 4 diff debs. I just ran the following to install them all:
+sudo dpkg -i *.deb</p>
+
+<ol>
+<li>Now the SDK and libraries will be installed to /usr/lib64, while Ubuntu expects them to be in /usr/lib. No problem, just make a symlink and update the library cache:
+ $ sudo ln -s /usr/lib64/libOpenCL.so /usr/lib/libOpenCL.so
+ $ sudo ldconfig</li>
+</ol>
+
+
+<p>That&rsquo;s it! OpenCL should be installed now. Let&rsquo;s try with a test program to see the device capabilities.</p>
+
+<pre><code>#include &lt;iostream&gt;
+#include &lt;CL/cl.hpp&gt;
+#include &lt;boost/foreach.hpp&gt;
+
+int main(int, char**) {
+ std::vector&lt;cl::Platform&gt; platforms;
+ cl::Platform::get(&amp;platforms);
+ BOOST_FOREACH(cl::Platform platform, platforms) {
+     std::cout &lt;&lt; "Platform: " &lt;&lt; platform.getInfo&lt;CL_PLATFORM_NAME&gt;() &lt;&lt; std::endl;
+     std::vector&lt;cl::Device&gt; devices;
+     platform.getDevices(CL_DEVICE_TYPE_GPU | CL_DEVICE_TYPE_CPU, &amp;devices);
+     BOOST_FOREACH(cl::Device device, devices) {
+         std::cout &lt;&lt; "Device: " &lt;&lt; device.getInfo&lt;CL_DEVICE_TYPE&gt;();
+         std::cout &lt;&lt; " (" &lt;&lt; CL_DEVICE_TYPE_GPU &lt;&lt; " means GPU, " &lt;&lt; CL_DEVICE_TYPE_CPU &lt;&lt; " means CPU)" &lt;&lt; std::endl;
+     }
+ }
+}
+</code></pre>
+
+<p>Save this snippet into opencl.cpp, compile and run:
+$ g++ opencl.cpp -lOpenCL -o opencl &amp;&amp; ./opencl
+Platform: Intel&reg; OpenCL
+Device: 2 (4 means GPU, 2 means CPU)
+This shows that this particular machine has one OpenCL-capable Intel CPU.</p>
+
+<hr />
+
+<p>So continuing on I basically kep trying to compile his example until it succesfully compiled and ran.</p>
+
+<p>So along with installing the libs I needed the headers to do this I made the following dir:</p>
+
+<pre><code>sudo mkdir -p /usr/local/cuda/include/CL
+cd /usr/local/cuda/include/CL
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl.hpp
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl.h
+sudo wget http://www.khronos.org/registry/cl/api/1.1/opencl.h
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl_platform.h
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl_gl.h
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl_gl_ext.h
+sudo wget http://www.khronos.org/registry/cl/api/1.1/cl_ext.h
+sudo chmod -R a+r /usr/local/cuda
+</code></pre>
+
+<p>If you are missing any other headers try looking for the file under the
+    <a href="http://www.khronos.org/registry/cl/api/1.1/">http://www.khronos.org/registry/cl/api/1.1/</a>
+directory..</p>
+
+<p>I also installed:</p>
+
+<p>sudo apt-get install libboost-all-dev python-setuptools python-numpy</p>
+
+<p>I actually installed numpy with pip but that should work too..</p>
+
+<p>I downloaded <a href="https://pypi.python.org/pypi/pyopencl">PyOpenCL</a> and ran
+    sudo python setup.py install
+however it couldnt find the headers.</p>
+
+<p>I actually just added the following line to setup.py, right before the line:
+    INCLUDE_DIRS = conf[&ldquo;BOOST_INC_DIR&rdquo;] + conf[&ldquo;CL_INC_DIR&rdquo;]
+I added:
+    conf[&ldquo;CL_INC_DIR&rdquo;] = [&lsquo;/usr/local/cuda/include/&rsquo;, &lsquo;/usr/local/cuda/include/CL&rsquo;]</p>
+
+<p>althouh you prob only need that first one..</p>
+
+<p>then running:
+    sudo python setup.py install
+worked great..</p>
+]]></content>
+  </entry>
+  
+</feed>
