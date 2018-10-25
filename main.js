@@ -28,74 +28,75 @@ app.stage.addChild(container);
 
 
 
+var slist = [];
 
-var SQUARE_COUNT = 200;
-var MAX_SIZE = 50;
-var MIN_SIZE = 20;
-let COLORS = [0xdddddd, 0x333333, 0xaaaaaa, 0x212121];
+function addSquares() {
+  var SQUARE_COUNT = 200;
+  var MAX_SIZE = 50;
+  var MIN_SIZE = 20;
+  let COLORS = [0xdddddd, 0x333333, 0xaaaaaa, 0x212121];
 
-let slist = [];
 
-for (var i=0; i<SQUARE_COUNT; i++) {
-  var x = Math.random() * WIDTH;
-  var y = Math.random() * HEIGHT;
+  for (var i=0; i<SQUARE_COUNT; i++) {
+    var x = Math.random() * WIDTH;
+    var y = Math.random() * HEIGHT;
 
-  let color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    let color = COLORS[Math.floor(Math.random() * COLORS.length)];
 
-  var size = MIN_SIZE + Math.random() * MAX_SIZE;
+    var size = MIN_SIZE + Math.random() * MAX_SIZE;
 
-  let rot = Math.random() * Math.PI;
+    let rot = Math.random() * Math.PI;
 
-  let s = new PIXI.Graphics();
-  s.beginFill(color);
-  s.drawRect(size * -1, size * -1, size, size);
-  s.position.x = x;
-  s.position.y = y;
-  s.rotation = rot; 
+    let s = new PIXI.Graphics();
+    s.beginFill(color);
+    s.drawRect(size * -1, size * -1, size, size);
+    s.position.x = x;
+    s.position.y = y;
+    s.rotation = rot; 
 
-  slist.push({
-    size,
-    s,
-    r: Math.random() * WIDTH
-  });
+    slist.push({
+      size,
+      s,
+      r: Math.random() * WIDTH
+    });
 
-  container.addChild(s);
+    container.addChild(s);
 
+  }
 }
 
+addSquares()
 
 
 
 
 
 
+function addText() {
+  var style = new PIXI.TextStyle({
+      fontFamily: 'Arial',
+      fontSize: 36,
+      fontStyle: 'italic',
+      fontWeight: 'bold',
+      fill: ['#ffffff', '#598dd0'], // gradient
+      stroke: '#4a1850',
+      strokeThickness: 5,
+      dropShadow: true,
+      dropShadowColor: '#000000',
+      dropShadowBlur: 4,
+      dropShadowAngle: Math.PI / 6,
+      dropShadowDistance: 6,
+      wordWrap: true,
+      wordWrapWidth: 440
+  });
 
+  var richText = new PIXI.Text('Brad Barrows', style);
+  richText.x = WIDTH/2 - 120;
+  richText.y = 180;
 
-
-var style = new PIXI.TextStyle({
-    fontFamily: 'Arial',
-    fontSize: 36,
-    fontStyle: 'italic',
-    fontWeight: 'bold',
-    fill: ['#ffffff', '#598dd0'], // gradient
-    stroke: '#4a1850',
-    strokeThickness: 5,
-    dropShadow: true,
-    dropShadowColor: '#000000',
-    dropShadowBlur: 4,
-    dropShadowAngle: Math.PI / 6,
-    dropShadowDistance: 6,
-    wordWrap: true,
-    wordWrapWidth: 440
-});
-
-var richText = new PIXI.Text('Brad Barrows', style);
-richText.x = WIDTH/2 - 120;
-richText.y = 180;
-
-container.addChild(richText);
-
-
+  container.addChild(richText);
+}
+addText()
 
 
 
@@ -135,7 +136,6 @@ function ShakerFilter() {
 
 
     {
-        rand: {type: '1f', value: 0.5},
         dimensions: {type: '4fv', value: [0, 0, 0, 0]},
         blur: {type: '2fv', value: [5, 0]}
     }
@@ -145,16 +145,6 @@ function ShakerFilter() {
 
 ShakerFilter.prototype = Object.create(PIXI.AbstractFilter.prototype);
 ShakerFilter.prototype.constructor = ShakerFilter;
-
-Object.defineProperty(ShakerFilter.prototype, 'rand', {
-    get: function() {
-        return this.uniforms.rand.value;
-    },
-    set: function(value) {
-        this.dirty = true;
-        this.uniforms.rand.value = value;
-    }
-});
 
 Object.defineProperty(ShakerFilter.prototype, 'blurX', {
     get: function() {
@@ -177,12 +167,72 @@ Object.defineProperty(ShakerFilter.prototype, 'blurY', {
 });
 
 
+
+
+
+
+
+let rainbowFrag = `
+precision mediump float;
+
+uniform sampler2D uSampler;
+varying vec2 vTextureCoord;
+
+uniform float customUniform;
+
+void main (void)
+{
+   vec2 uvs = vTextureCoord.xy;
+   vec4 pixel = texture2D(uSampler, vTextureCoord);
+   pixel.r = uvs.y + sin(customUniform);
+   pixel.g = uvs.x + sin(customUniform);
+   pixel.b = uvs.y + cos(customUniform);
+   gl_FragColor = pixel;
+}
+`;
+
+
+function RainbowFilter() {
+    PIXI.AbstractFilter.call(this,
+      
+      null,
+
+      rainbowFrag,
+
+
+    {
+        customUniform: {type: '1f', value: 0.001}
+    }
+    );
+
+};
+
+RainbowFilter.prototype = Object.create(PIXI.AbstractFilter.prototype);
+RainbowFilter.prototype.constructor = RainbowFilter;
+
+Object.defineProperty(RainbowFilter.prototype, 'rand', {
+    get: function() {
+        return this.uniforms.rand.value;
+    },
+    set: function(value) {
+        this.dirty = true;
+        this.uniforms.rand.value = value;
+    }
+});
+
+
+
+
+
+
+var rainbowFilter = new RainbowFilter();
 var shakerFilter = new ShakerFilter();
-container.filters = [shakerFilter];
 
+//container.filters = [shakerFilter, rainbowFilter];
 
+container.filters = [rainbowFilter];
 
-
+//container.filters = [shakerFilter];
 
 
 app.start();
@@ -201,9 +251,15 @@ app.ticker.add(function(delta) {
     slist[i].r = slist[i].r + 1;
   }  
   
+
+
   //debugger;
   shakerFilter.uniformData.blur.value[0] = Math.floor(Math.random() * 5);
   shakerFilter.uniformData.blur.value[1] = Math.floor(Math.random() * 5);
+
+
+  rainbowFilter.uniforms.customUniform += delta * 0.04;
+  
 
 
 });
