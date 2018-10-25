@@ -135,6 +135,7 @@ function ShakerFilter() {
 
 
     {
+        rand: {type: '1f', value: 0.5},
         dimensions: {type: '4fv', value: [0, 0, 0, 0]},
         blur: {type: '2fv', value: [5, 0]}
     }
@@ -144,6 +145,16 @@ function ShakerFilter() {
 
 ShakerFilter.prototype = Object.create(PIXI.AbstractFilter.prototype);
 ShakerFilter.prototype.constructor = ShakerFilter;
+
+Object.defineProperty(ShakerFilter.prototype, 'rand', {
+    get: function() {
+        return this.uniforms.rand.value;
+    },
+    set: function(value) {
+        this.dirty = true;
+        this.uniforms.rand.value = value;
+    }
+});
 
 Object.defineProperty(ShakerFilter.prototype, 'blurX', {
     get: function() {
@@ -166,7 +177,7 @@ Object.defineProperty(ShakerFilter.prototype, 'blurY', {
 });
 
 
-let shakerFilter = new ShakerFilter();
+var shakerFilter = new ShakerFilter();
 container.filters = [shakerFilter];
 
 
@@ -189,6 +200,10 @@ app.ticker.add(function(delta) {
 
     slist[i].r = slist[i].r + 1;
   }  
+  
+  //debugger;
+  shakerFilter.uniformData.blur.value[0] = Math.floor(Math.random() * 5);
+  shakerFilter.uniformData.blur.value[1] = Math.floor(Math.random() * 5);
 
 
 });
