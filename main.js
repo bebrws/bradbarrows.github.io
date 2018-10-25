@@ -4,6 +4,8 @@
 
 // Square sin wave idea and code basically from the same guy
 
+console.log("I am trying to learn PIXI. This is from this guys work: http://gun.net.au/");
+
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 
