@@ -63,6 +63,24 @@ Object.defineProperty(ShakerFilter.prototype, 'blurY', {
 });
 
 
+/*
+
+Setup:
+var shakerFilter = new ShakerFilter();
+container.filters = [shakerFilter];
+
+App tick:
+shakerFilter.uniformData.blur.value[0] = Math.floor(Math.random() * 5);
+shakerFilter.uniformData.blur.value[1] = Math.floor(Math.random() * 5);
+
+*/
+
+
+
+
+
+
+
 
 
 
@@ -117,3 +135,12 @@ Object.defineProperty(RainbowFilter.prototype, 'rand', {
 });
 
 
+/*
+Setup:
+var rainbowFilter = new RainbowFilter();
+container.filters = [rainbowFilter];
+
+App Tick:
+rainbowFilter.uniforms.customUniform += delta * 0.04;
+
+*/
