@@ -5,6 +5,10 @@
 // Square sin wave idea and code basically from the same guy
 
 console.log("I am trying to learn PIXI. This is from this guys work: http://gun.net.au/");
+// Was messing around with these filteres
+// from the site above. If anyooone happened to see this random page 
+// for the hour or so it was up
+
 
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
@@ -65,7 +69,7 @@ function addSquares() {
   }
 }
 
-addSquares()
+// addSquares()
 
 
 
@@ -106,12 +110,12 @@ addText()
 
 
 
-var rainbowFilter = new RainbowFilter();
-var shakerFilter = new ShakerFilter();
+//var rainbowFilter = new RainbowFilter();
+//var shakerFilter = new ShakerFilter();
 
 //container.filters = [shakerFilter, rainbowFilter];
 
-container.filters = [rainbowFilter];
+// container.filters = [rainbowFilter];
 
 //container.filters = [shakerFilter];
 
