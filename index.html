@@ -2,6 +2,7 @@
 
 <html lang="en-US" class="wf-nyty-n4-active wf-nyty-n5-active wf-nyty-n6-active wf-nyty-n7-active wf-active"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <script type="text/javascript" src="./pixi.js"></script>
+  <script type="text/javascript" src="./scaleToWindow.js"></script>
   <script type="text/javascript" src="./jquery-3.3.1.min.js"></script>
 
   <!--script type="text/javascript" src="./PixiGlitchSrc/TwistFilter.js"></script-->
@@ -19,13 +20,27 @@
     <link rel="canonical" href="http://bbarrows.com/">
       <title>Brad Barrows</title>
 
-<style type="text/css">@font-face{font-family:nyty;src:url(https://use.typekit.net/af/46da36/00000000000000003b9acaf6/27/l?subset_id=2&fvd=n4&v=3) format("woff2"),url(https://use.typekit.net/af/46da36/00000000000000003b9acaf6/27/d?subset_id=2&fvd=n4&v=3) format("woff"),url(https://use.typekit.net/af/46da36/00000000000000003b9acaf6/27/a?subset_id=2&fvd=n4&v=3) format("opentype");font-weight:400;font-style:normal;}@font-face{font-family:nyty;src:url(https://use.typekit.net/af/829fc1/00000000000000003b9acaf8/27/l?subset_id=2&fvd=n5&v=3) format("woff2"),url(https://use.typekit.net/af/829fc1/00000000000000003b9acaf8/27/d?subset_id=2&fvd=n5&v=3) format("woff"),url(https://use.typekit.net/af/829fc1/00000000000000003b9acaf8/27/a?subset_id=2&fvd=n5&v=3) format("opentype");font-weight:500;font-style:normal;}@font-face{font-family:nyty;src:url(https://use.typekit.net/af/027dd4/00000000000000003b9acafa/27/l?subset_id=2&fvd=n6&v=3) format("woff2"),url(https://use.typekit.net/af/027dd4/00000000000000003b9acafa/27/d?subset_id=2&fvd=n6&v=3) format("woff"),url(https://use.typekit.net/af/027dd4/00000000000000003b9acafa/27/a?subset_id=2&fvd=n6&v=3) format("opentype");font-weight:600;font-style:normal;}@font-face{font-family:nyty;src:url(https://use.typekit.net/af/6d4bb2/00000000000000003b9acafc/27/l?subset_id=2&fvd=n7&v=3) format("woff2"),url(https://use.typekit.net/af/6d4bb2/00000000000000003b9acafc/27/d?subset_id=2&fvd=n7&v=3) format("woff"),url(https://use.typekit.net/af/6d4bb2/00000000000000003b9acafc/27/a?subset_id=2&fvd=n7&v=3) format("opentype");font-weight:700;font-style:normal;}</style><style type="text/css"></style>
+<style type="text/css">@font-face{font-family:nyty;src:url(https://use.typekit.net/af/46da36/00000000000000003b9acaf6/27/l?subset_id=2&fvd=n4&v=3) format("woff2"),url(https://use.typekit.net/af/46da36/00000000000000003b9acaf6/27/d?subset_id=2&fvd=n4&v=3) format("woff"),url(https://use.typekit.net/af/46da36/00000000000000003b9acaf6/27/a?subset_id=2&fvd=n4&v=3) format("opentype");font-weight:400;font-style:normal;}@font-face{font-family:nyty;src:url(https://use.typekit.net/af/829fc1/00000000000000003b9acaf8/27/l?subset_id=2&fvd=n5&v=3) format("woff2"),url(https://use.typekit.net/af/829fc1/00000000000000003b9acaf8/27/d?subset_id=2&fvd=n5&v=3) format("woff"),url(https://use.typekit.net/af/829fc1/00000000000000003b9acaf8/27/a?subset_id=2&fvd=n5&v=3) format("opentype");font-weight:500;font-style:normal;}@font-face{font-family:nyty;src:url(https://use.typekit.net/af/027dd4/00000000000000003b9acafa/27/l?subset_id=2&fvd=n6&v=3) format("woff2"),url(https://use.typekit.net/af/027dd4/00000000000000003b9acafa/27/d?subset_id=2&fvd=n6&v=3) format("woff"),url(https://use.typekit.net/af/027dd4/00000000000000003b9acafa/27/a?subset_id=2&fvd=n6&v=3) format("opentype");font-weight:600;font-style:normal;}@font-face{font-family:nyty;src:url(https://use.typekit.net/af/6d4bb2/00000000000000003b9acafc/27/l?subset_id=2&fvd=n7&v=3) format("woff2"),url(https://use.typekit.net/af/6d4bb2/00000000000000003b9acafc/27/d?subset_id=2&fvd=n7&v=3) format("woff"),url(https://use.typekit.net/af/6d4bb2/00000000000000003b9acafc/27/a?subset_id=2&fvd=n7&v=3) format("opentype");font-weight:700;font-style:normal;}</style>
+
+<style type="text/css">
+  
+#fullcover {
+    background-color: rgba(177, 62, 156, 0.2);
+    z-index: 100;
+    /* display: block; */
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}  
+</style>
 
 </head>
 
 
 
         <body class="transition-enabled transition-in link-transition">
+
+          <div id="fullcover"></div>
 
           <div class="js-responsive-nav">
   <div class="responsive-nav has-social">

@@ -1,5 +1,13 @@
-var app = new PIXI.Application(800, 600, {backgroundColor : 0x212121});
-$("#masthead")[0].appendChild(app.view);
+var WIDTH = window.innerWidth;
+var HEIGHT = window.innerHeight;
+
+var app = new PIXI.Application(WIDTH, HEIGHT, {backgroundColor : 0x212121});
+$("#fullcover")[0].appendChild(app.view);
+
+var scale = scaleToWindow(app.view);
+window.addEventListener("resize", function(event){ 
+  scaleToWindow(app.view);
+});
 
 var container = new PIXI.Container();
 
@@ -9,8 +17,6 @@ app.stage.addChild(container);
 
 
 var SQUARE_COUNT = 200;
-var WIDTH = 800;
-var HEIGHT = 600;
 var MAX_SIZE = 50;
 var MIN_SIZE = 20;
 let COLORS = [0xdddddd, 0x333333, 0xaaaaaa, 0x212121];
@@ -67,7 +73,7 @@ var style = new PIXI.TextStyle({
 });
 
 var richText = new PIXI.Text('Brad Barrows', style);
-richText.x = 290;
+richText.x = WIDTH/2 - 120;
 richText.y = 180;
 
 container.addChild(richText);
