@@ -62,7 +62,7 @@ function TwistFilter() {
         timer: {type: '1f', value: 0},
         val2: {type: '1f', value: 5},
         val3: {type: '1f', value: 55},
-        dimensions: {type: '4fv', value: [0, 0, 0, 0]}
+        dimensions: {type: '4fv', value: [1, 0, 1, 0]}
     }
   );
 

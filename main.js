@@ -30,11 +30,11 @@ container.addChild(richText);
 
 
 
-
+var squares = [];
 function addSquares() {
   var width = 800;
   var height = 600;
-  var squares = [];
+  
 
   var COOL_COLOURS = [0xffffff, 0xffffff, 0xeeeeee, 0xcccccc, 0x999999, 0x555555, 0x777777];
   // create them - a bunch of squares all random
@@ -62,8 +62,8 @@ addSquares()
 //var twistFilter = new TwistFilter();
 //container.filters = [twistFilter];
 
-var shakerFilter = new ShakerFilter();
-container.filters = [shakerFilter];
+//var shakerFilter = new ShakerFilter();
+//container.filters = [shakerFilter];
 
 
 // Twist filter from
@@ -102,9 +102,107 @@ NoRedFilter.prototype = Object.create(PIXI.AbstractFilter.prototype);
 NoRedFilter.prototype.constructor = NoRedFilter;
 
 
-var noRedFilter = new NoRedFilter();
-
+//var noRedFilter = new NoRedFilter();
 //container.filters = [noRedFilter];
+
+
+
+
+
+
+var slitScanFrag = `precision mediump float;
+uniform float rand;
+uniform vec4 dimensions;
+uniform sampler2D uSampler;
+varying vec2 vTextureCoord;
+void main (void)
+{
+   float slit_h = rand;
+   vec2 pos = vTextureCoord * vec2(dimensions);
+   vec2 texCoord = vec2(3.0+floor(pos.x/slit_h)*slit_h ,pos.y);
+   vec4 col = texture2D(uSampler, texCoord / vec2(dimensions));
+   gl_FragColor.rgba = col.rgba;
+}
+`;
+
+function SlitScanFilter() {
+    PIXI.AbstractFilter.call(this,
+
+      null,
+
+      slitScanFrag,
+
+  {
+        rand: {type: '1f', value: 15},
+        dimensions: {type: '4fv', value: [0, 0, 0, 0]}
+    });
+
+};
+
+SlitScanFilter.prototype = Object.create(PIXI.AbstractFilter.prototype);
+SlitScanFilter.prototype.constructor = SlitScanFilter;
+
+Object.defineProperty(SlitScanFilter.prototype, 'rand', {
+    get: function() {
+        return this.uniforms.rand.value;
+    },
+    set: function(value) {
+        this.dirty = true;
+        this.uniforms.rand.value = value;
+    }
+});
+
+
+
+var slitScanFilter = new SlitScanFilter();
+//container.filters = [slitScanFilter];
+
+
+
+
+
+
+
+
+
+
+app.start();
+
+var steps = 0;
+app.ticker.add(function(delta) {
+    console.log("tick");
+/*
+        randMA = 0;
+        randMB = 0;
+        val2MA = 0;
+        val2MB = 0;
+        val3MA = 0;
+        val3MB = 0;
+        timerMA = Math.random() * 0.05;
+        randMA = Math.random() * 0.001;
+        randMB = Math.random() * 10 + 10;
+        val2MA = Math.random() * 0.0001;
+        val2MB = Math.random() * 200 + 150;
+        val3MA = Math.random() * 0.0003;
+        val3MB = Math.random() * 500 + 200;
+
+      steps ++;
+        twistFilter.timer = steps * timerMA;
+        twistFilter.rand = Math.sin(steps * randMA) * randMB;
+        twistFilter.val2 = Math.sin(steps * val2MA) * val2MB;
+        twistFilter.val3 = Math.sin(steps * val3MA) * val3MB;
+*/
+        for (i = 0; i < squares.length; i++) {
+            square = squares[i].square;
+            sideLength = squares[i].sideLength;
+            counter = squares[i].counter++;
+            square.position.x += Math.sin(counter * 0.002) * sideLength * 0.015;
+            square.position.y += Math.sin(counter * 0.002) * sideLength * 0.015;
+            square.rotation += Math.sin(counter * 0.01) * 0.01;
+        }
+
+
+});
 
 
 
