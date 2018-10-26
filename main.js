@@ -1,15 +1,3 @@
-// Looking to add filters from
-// https://cdn.rawgit.com/ktingvoar/PixiGlitch/0752d6628e23920a429da71a1881552b16a3b932/examples/dashboard/index.html
-// http://gun.net.au/
-
-// Square sin wave idea and code basically from the same guy
-
-console.log("I am trying to learn PIXI. This is from this guys work: http://gun.net.au/");
-// Was messing around with these filteres
-// from the site above. If anyooone happened to see this random page 
-// for the hour or so it was up
-
-
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 
@@ -24,52 +12,6 @@ window.addEventListener("resize", function(event){
 var container = new PIXI.Container();
 
 app.stage.addChild(container);
-
-
-
-
-
-
-
-
-var slist = [];
-
-function addSquares() {
-  var SQUARE_COUNT = 200;
-  var MAX_SIZE = 50;
-  var MIN_SIZE = 20;
-  let COLORS = [0xdddddd, 0x333333, 0xaaaaaa, 0x212121];
-
-
-  for (var i=0; i<SQUARE_COUNT; i++) {
-    var x = Math.random() * WIDTH;
-    var y = Math.random() * HEIGHT;
-
-    let color = COLORS[Math.floor(Math.random() * COLORS.length)];
-
-    var size = MIN_SIZE + Math.random() * MAX_SIZE;
-
-    let rot = Math.random() * Math.PI;
-
-    let s = new PIXI.Graphics();
-    s.beginFill(color);
-    s.drawRect(size * -1, size * -1, size, size);
-    s.position.x = x;
-    s.position.y = y;
-    s.rotation = rot; 
-
-    slist.push({
-      size,
-      s,
-      r: Math.random() * WIDTH
-    });
-
-    container.addChild(s);
-
-  }
-}
-
-// addSquares()
 
 
 
@@ -101,54 +43,4 @@ function addText() {
   container.addChild(richText);
 }
 addText()
-
-
-
-
-
-
-
-
-
-//var rainbowFilter = new RainbowFilter();
-//var shakerFilter = new ShakerFilter();
-
-//container.filters = [shakerFilter, rainbowFilter];
-
-// container.filters = [rainbowFilter];
-
-//container.filters = [shakerFilter];
-
-
-app.start();
-
-var steps = 0;
-app.ticker.add(function(delta) {
-
-  for (i = 0; i < slist.length; i++) {
-    let s = slist[i].s;
-
-    s.rotation += Math.cos(slist[i].r * 0.01) * 0.03;
-
-    s.position.x += Math.sin(slist[i].r * 0.01) * 0.03 * slist[i].size;
-    s.position.y += Math.sin(slist[i].r * 0.01) * 0.03 * slist[i].size;
-
-    slist[i].r = slist[i].r + 1;
-  }  
-  
-
-
-  //debugger;
-  shakerFilter.uniformData.blur.value[0] = Math.floor(Math.random() * 5);
-  shakerFilter.uniformData.blur.value[1] = Math.floor(Math.random() * 5);
-
-
-  rainbowFilter.uniforms.customUniform += delta * 0.04;
-  
-
-
-});
-
-
-
 
