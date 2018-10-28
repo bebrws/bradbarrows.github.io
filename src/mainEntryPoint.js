@@ -164,7 +164,7 @@ app.start();
 var steps = 0;
 app.ticker.add(function(delta) {
 
-  for (i = 0; i < slist.length; i++) {
+  for (var i = 0; i < slist.length; i++) {
     let s = slist[i].s;
 
     s.rotation += Math.cos(slist[i].r * 0.01) * 0.03;
@@ -177,6 +177,7 @@ app.ticker.add(function(delta) {
   
 
 
+
   //debugger;
 
 
@@ -185,6 +186,9 @@ app.ticker.add(function(delta) {
   //shakerFilter.uniformData.blur.value[1] = Math.floor(Math.random() * 5);
 
   //rainbowFilter.uniforms.customUniform += delta * 0.04;
+
+
+  //builtInGlitchFilter.slices = Math.floor(Math.random() * 10) + 20;
   
 
 

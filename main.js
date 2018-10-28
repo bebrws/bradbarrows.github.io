@@ -162,7 +162,7 @@ app.start();
 var steps = 0;
 app.ticker.add(function(delta) {
 
-  for (i = 0; i < slist.length; i++) {
+  for (let i = 0; i < slist.length; i++) {
     let s = slist[i].s;
 
     s.rotation += Math.cos(slist[i].r * 0.01) * 0.03;

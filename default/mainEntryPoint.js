@@ -15,7 +15,6 @@ import { GlitchFilter } from '@pixi/filter-glitch';
 
 
 
-
 // Looking to add filters from
 // https://cdn.rawgit.com/ktingvoar/PixiGlitch/0752d6628e23920a429da71a1881552b16a3b932/examples/dashboard/index.html
 // http://gun.net.au/
@@ -141,7 +140,9 @@ addText();
 //container.filters = [shakerFilter];
 
 
-debugger;
+// debugger;
+
+
 var builtInGlitchFilter = new GlitchFilter();
 builtInGlitchFilter.slices = 30;
 // builtInGlitchFilter.fillMode = 0; // 0 
@@ -158,12 +159,17 @@ builtInGlitchFilter.sampleSize = 2048;
 container.filters = [builtInGlitchFilter];
 
 
+
+
+console.log("App start");
+
+
 app.start();
 
 var steps = 0;
 app.ticker.add(function(delta) {
 
-  for (i = 0; i < slist.length; i++) {
+  for (var i = 0; i < slist.length; i++) {
     let s = slist[i].s;
 
     s.rotation += Math.cos(slist[i].r * 0.01) * 0.03;
@@ -185,6 +191,7 @@ app.ticker.add(function(delta) {
 
   //rainbowFilter.uniforms.customUniform += delta * 0.04;
   
+  //builtInGlitchFilter.slices = Math.floor(Math.random() * 10) + 20;
 
 
 });

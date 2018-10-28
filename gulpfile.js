@@ -4,7 +4,7 @@ var source = require('vinyl-source-stream');
 var tsify = require('tsify');
 var sourcemaps = require('gulp-sourcemaps');
 var buffer = require('vinyl-buffer');
-var watch = require('gulp-watch');
+var gutil = require('gulp-util');
 
 // Original: https://raw.githubusercontent.com/Oxyyx/pixi_gulp_typescript/master/gulpfile.js
 // Based on the docs at:  https://www.typescriptlang.org/docs/handbook/gulp.html
@@ -34,12 +34,14 @@ gulp.task('default', function () {
 
 gulp.task('default', ['build-js']);
 
-gulp.task('watch:js', function () {
+gulp.task('watchjs', function () {
     // Endless stream mode
-    return watch('src/*.js', ['default']);
+    gutil.log('Watching JS from mainEntryPoint.js');
+    return gulp.watch('./src/mainEntryPoint.js', ['build-js']);
 });
 
 gulp.task('build-js', function () {
+    gutil.log('Building JS from mainEntryPoint.js');
     return browserify({
         basedir: '.',
         debug: true,
@@ -55,7 +57,8 @@ gulp.task('build-js', function () {
     .bundle()
     .pipe(source('bundle.js'))
     .pipe(buffer())
-    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(sourcemaps.identityMap())
+    //.pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest('dist'));
 });
