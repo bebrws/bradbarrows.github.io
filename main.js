@@ -1,10 +1,28 @@
+// IDEAS FOR GLITCH EFFECT:
+// COULD COMBINE FROM http://pixijs.io/pixi-filters/docs/:
+// MotionBlurFilter
+// GlitchFilter
+// BulgePinchFilter
+// PixelateFilter
+// RadialBlurFilter
+// NoiseFilter
+//
+// ON ITS OWN THIS MIGHT BE COOL
+// ZoomBlurFilter
+//
+
+
+
+
 // Looking to add filters from
 // https://cdn.rawgit.com/ktingvoar/PixiGlitch/0752d6628e23920a429da71a1881552b16a3b932/examples/dashboard/index.html
 // http://gun.net.au/
+// https://github.com/ktingvoar/PixiGlitch
 
 // Square sin wave idea and code basically from the same guy
 
 console.log("I am trying to learn PIXI. This is from this guys work: http://gun.net.au/");
+
 
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
@@ -90,11 +108,17 @@ function addText() {
       wordWrapWidth: 440
   });
 
-  var richText = new PIXI.Text('Brad Barrows', style);
-  richText.x = WIDTH/2 - 120;
-  richText.y = 180;
+  var richTextName = new PIXI.Text('Brad Barrows', style);
+  richTextName.x = WIDTH/2 - 120;
+  richTextName.y = 180;
 
-  container.addChild(richText);
+  container.addChild(richTextName);
+
+  var richTextScratch = new PIXI.Text('See Console Log', style);
+  richTextScratch.x = WIDTH/2 - 150;
+  richTextScratch.y = 240;
+
+  container.addChild(richTextScratch);  
 }
 addText()
 
@@ -106,12 +130,12 @@ addText()
 
 
 
-var rainbowFilter = new RainbowFilter();
-var shakerFilter = new ShakerFilter();
+//var rainbowFilter = new RainbowFilter();
+//var shakerFilter = new ShakerFilter();
 
 //container.filters = [shakerFilter, rainbowFilter];
 
-container.filters = [rainbowFilter];
+//container.filters = [rainbowFilter];
 
 //container.filters = [shakerFilter];
 
@@ -135,11 +159,13 @@ app.ticker.add(function(delta) {
 
 
   //debugger;
-  shakerFilter.uniformData.blur.value[0] = Math.floor(Math.random() * 5);
-  shakerFilter.uniformData.blur.value[1] = Math.floor(Math.random() * 5);
+  
 
+  
+  //shakerFilter.uniformData.blur.value[0] = Math.floor(Math.random() * 5);
+  //shakerFilter.uniformData.blur.value[1] = Math.floor(Math.random() * 5);
 
-  rainbowFilter.uniforms.customUniform += delta * 0.04;
+  //rainbowFilter.uniforms.customUniform += delta * 0.04;
   
 
 
