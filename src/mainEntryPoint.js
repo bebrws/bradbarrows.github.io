@@ -1,3 +1,5 @@
+import { GlitchFilter } from '@pixi/filter-glitch';
+
 // IDEAS FOR GLITCH EFFECT:
 // COULD COMBINE FROM http://pixijs.io/pixi-filters/docs/:
 // MotionBlurFilter
@@ -120,8 +122,8 @@ function addText() {
 
   container.addChild(richTextScratch);  
 }
-addText()
-
+addText();
+console.log("TEST")
 
 
 
@@ -140,8 +142,8 @@ addText()
 //container.filters = [shakerFilter];
 
 
-debugger;
-var builtInGlitchFilter = new PIXI.filters.GlitchFilter();
+// debugger;
+var builtInGlitchFilter = new GlitchFilter();
 builtInGlitchFilter.slices = 30;
 // builtInGlitchFilter.fillMode = 0; // 0 
 /* 
