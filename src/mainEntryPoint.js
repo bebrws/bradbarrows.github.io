@@ -239,7 +239,7 @@ Fill Modes:
 
 
 
-
+/*
 
 let githubSprite = new PIXI.Sprite(githubTexture);
 
@@ -265,7 +265,7 @@ githubSprite.x = 100;
 githubSprite.y = 600;
 container.addChild(githubSprite);
 
-
+*/
 
 
 app.start();
