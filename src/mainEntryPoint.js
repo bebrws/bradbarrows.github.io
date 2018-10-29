@@ -37,13 +37,29 @@ var HEIGHT = window.innerHeight;
 var app = new PIXI.Application(WIDTH, HEIGHT, {backgroundColor : 0x212121});
 $("#fullcover")[0].appendChild(app.view);
 
+
+function customWindowResize() {
+    if (window.innerWidth / window.innerHeight >= ratio) {
+        var w = window.innerHeight * ratio;
+        var h = window.innerHeight;
+    } else {
+        var w = window.innerWidth;
+        var h = window.innerWidth / ratio;
+    }
+    app.renderer.view.style.width = w + 'px';
+    app.renderer.view.style.height = h + 'px';
+}
+
+
 var scale = scaleToWindow(app.view);
 window.addEventListener("resize", function(event){ 
   scaleToWindow(app.view);
+  customWindowResize();
 });
 
 $(window).resize(function(){
   scaleToWindow(app.view);
+  customWindowResize();
 });
 
 var container = new PIXI.Container();
