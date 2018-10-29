@@ -42,6 +42,10 @@ window.addEventListener("resize", function(event){
   scaleToWindow(app.view);
 });
 
+$(window).resize(function(){
+  scaleToWindow(app.view);
+});
+
 var container = new PIXI.Container();
 
 app.stage.addChild(container);
