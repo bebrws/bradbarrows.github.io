@@ -1,3 +1,5 @@
+import { GlitchFilter } from '@pixi/filter-glitch';
+
 // IDEAS FOR GLITCH EFFECT:
 // COULD COMBINE FROM http://pixijs.io/pixi-filters/docs/:
 // MotionBlurFilter
@@ -13,7 +15,6 @@
 
 
 
-
 // Looking to add filters from
 // https://cdn.rawgit.com/ktingvoar/PixiGlitch/0752d6628e23920a429da71a1881552b16a3b932/examples/dashboard/index.html
 // http://gun.net.au/
@@ -24,7 +25,6 @@
 console.log("I am trying to learn PIXI. This is from this guys work: http://gun.net.au/");
 
 
->>>>>>> ES6
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
 
@@ -39,6 +39,52 @@ window.addEventListener("resize", function(event){
 var container = new PIXI.Container();
 
 app.stage.addChild(container);
+
+
+
+
+
+
+
+
+var slist = [];
+
+function addSquares() {
+  var SQUARE_COUNT = 200;
+  var MAX_SIZE = 50;
+  var MIN_SIZE = 20;
+  let COLORS = [0xdddddd, 0x333333, 0xaaaaaa, 0x212121];
+
+
+  for (var i=0; i<SQUARE_COUNT; i++) {
+    var x = Math.random() * WIDTH;
+    var y = Math.random() * HEIGHT;
+
+    let color = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+    var size = MIN_SIZE + Math.random() * MAX_SIZE;
+
+    let rot = Math.random() * Math.PI;
+
+    let s = new PIXI.Graphics();
+    s.beginFill(color);
+    s.drawRect(size * -1, size * -1, size, size);
+    s.position.x = x;
+    s.position.y = y;
+    s.rotation = rot; 
+
+    slist.push({
+      size,
+      s,
+      r: Math.random() * WIDTH
+    });
+
+    container.addChild(s);
+
+  }
+}
+
+addSquares()
 
 
 
@@ -75,10 +121,7 @@ function addText() {
 
   container.addChild(richTextScratch);  
 }
-addText()
-
-<<<<<<< HEAD
-=======
+addText();
 
 
 
@@ -97,9 +140,11 @@ addText()
 //container.filters = [shakerFilter];
 
 
-debugger;
-var builtInGlitchFilter = new PIXI.filters.GlitchFilter();
-builtInGlitchFilter.slices = 30;
+// debugger;
+
+
+//var builtInGlitchFilter = new GlitchFilter();
+//builtInGlitchFilter.slices = 30;
 // builtInGlitchFilter.fillMode = 0; // 0 
 /* 
 Fill Modes:
@@ -109,9 +154,14 @@ Fill Modes:
 3 CLAMP
 4 MIRROR
 */
-builtInGlitchFilter.sampleSize = 2048;
+//builtInGlitchFilter.sampleSize = 2048;
 
-container.filters = [builtInGlitchFilter];
+// container.filters = [builtInGlitchFilter];
+
+
+
+
+console.log("App start");
 
 
 app.start();
@@ -119,7 +169,7 @@ app.start();
 var steps = 0;
 app.ticker.add(function(delta) {
 
-  for (let i = 0; i < slist.length; i++) {
+  for (var i = 0; i < slist.length; i++) {
     let s = slist[i].s;
 
     s.rotation += Math.cos(slist[i].r * 0.01) * 0.03;
@@ -141,8 +191,11 @@ app.ticker.add(function(delta) {
 
   //rainbowFilter.uniforms.customUniform += delta * 0.04;
   
+  //builtInGlitchFilter.slices = Math.floor(Math.random() * 10) + 20;
 
 
 });
+
+
 
 

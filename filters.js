@@ -1,4 +1,58 @@
 
+let myFilterFrag = `
+precision mediump float;
+
+uniform sampler2D uSampler;
+varying vec2 vTextureCoord;
+
+uniform float customUniform;
+
+void main (void)
+{
+   vec2 uvs = vTextureCoord.xy;
+   vec4 pixel = texture2D(uSampler, vTextureCoord);
+   pixel.r = uvs.y + sin(customUniform);
+   pixel.g = uvs.x + sin(customUniform);
+   pixel.b = uvs.y + cos(customUniform);
+   gl_FragColor = pixel;
+}
+`;
+
+
+function MyFilter() {
+    PIXI.AbstractFilter.call(this,
+      
+      null,
+
+      myFilterFrag,
+
+
+    {
+        customUniform: {type: '1f', value: 0.001}
+    }
+    );
+
+};
+
+MyFilter.prototype = Object.create(PIXI.AbstractFilter.prototype);
+MyFilter.prototype.constructor = MyFilter;
+
+Object.defineProperty(MyFilter.prototype, 'rand', {
+    get: function() {
+        return this.uniforms.rand.value;
+    },
+    set: function(value) {
+        this.dirty = true;
+        this.uniforms.rand.value = value;
+    }
+});
+
+
+
+
+
+
+
 let shakerFrag = `
 precision mediump float;
 uniform sampler2D uSampler;
