@@ -292,8 +292,8 @@ app.ticker.add(function(delta) {
   }  
   
 
-  githubSprite.x = steps;
-  githubSprite.y = (Math.sin(steps * 0.05) * 100) + 500;  
+  // githubSprite.x = steps;
+  // githubSprite.y = (Math.sin(steps * 0.05) * 100) + 500;  
 
 
 
