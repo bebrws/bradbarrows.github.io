@@ -145,7 +145,7 @@ function addSquares() {
   }
 }
 
-addSquares()
+// addSquares()
 
 
 
@@ -168,7 +168,7 @@ function addText() {
       wordWrapWidth: 800
   });
 
-  var richTextName = new PIXI.Text('Brad Barrows', nameStyle);
+  var richTextName = new PIXI.Text('A Site', nameStyle);
   richTextName.x = (WIDTH/2) - (richTextName.width/2);
   richTextName.y = 180;
 
@@ -274,11 +274,12 @@ var steps = 0;
 app.ticker.add(function(delta) {
 
   // console.log(`Step ${steps}`)
+  // Could me modulo width but that would be slower
   steps += 1;
   if (steps > window.innerWidth) {
     steps = 0;
   }
-
+/*
   for (var i = 0; i < slist.length; i++) {
     let s = slist[i].s;
     let speed = slist[i].speed;
@@ -290,6 +291,7 @@ app.ticker.add(function(delta) {
 
     slist[i].r += 1;
   }  
+  */
   
 
   // githubSprite.x = steps;
