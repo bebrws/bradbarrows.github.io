@@ -19,7 +19,8 @@
   "homepage": "https://github.com/bbarrows/bbarrows.github.io#readme",
   "dependencies": {
     "@pixi/filter-glitch": "^2.6.1",
-    "fsevents": "^1.2.4"
+    "fsevents": "^1.2.4",
+    "pixi-filters": "^2.6.1"
   },
   "peerDependencies": {
     "pixi.js": "^4.5.0"

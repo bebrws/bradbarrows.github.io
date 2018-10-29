@@ -143,8 +143,8 @@ addText();
 // debugger;
 
 
-var builtInGlitchFilter = new GlitchFilter();
-builtInGlitchFilter.slices = 30;
+//var builtInGlitchFilter = new GlitchFilter();
+//builtInGlitchFilter.slices = 30;
 // builtInGlitchFilter.fillMode = 0; // 0 
 /* 
 Fill Modes:
@@ -154,9 +154,9 @@ Fill Modes:
 3 CLAMP
 4 MIRROR
 */
-builtInGlitchFilter.sampleSize = 2048;
+//builtInGlitchFilter.sampleSize = 2048;
 
-container.filters = [builtInGlitchFilter];
+// container.filters = [builtInGlitchFilter];
 
 
 

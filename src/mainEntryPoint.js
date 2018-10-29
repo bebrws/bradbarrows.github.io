@@ -1,4 +1,8 @@
 import { GlitchFilter } from '@pixi/filter-glitch';
+import { AsciiFilter } from 'pixi-filters'; 
+// https://www.npmjs.com/package/pixi-filters
+// Demos
+// http://pixijs.io/pixi-filters/tools/demo/
 
 // IDEAS FOR GLITCH EFFECT:
 // COULD COMBINE FROM http://pixijs.io/pixi-filters/docs/:
@@ -12,6 +16,7 @@ import { GlitchFilter } from '@pixi/filter-glitch';
 // ON ITS OWN THIS MIGHT BE COOL
 // ZoomBlurFilter
 //
+
 
 
 
@@ -43,7 +48,17 @@ app.stage.addChild(container);
 
 
 
+// For Font Awesome
+// 20 Sided die
+// <i class="far fa-dice-d20"></i>
+// https://fontawesome.com/icons/dice-d20?style=regular
+// Just using the SVG and loading it as a texture
+let d20Texture = new PIXI.Texture.fromImage('./imgs/d20.svg', undefined, undefined, 1.0)
 
+//let d20Sprite = new PIXI.Sprite(d20Texture);
+//d20Sprite.x = 300;
+//d20Sprite.y = 300;
+//container.addChild(d20Sprite);
 
 
 
@@ -55,7 +70,8 @@ function addSquares() {
   var MAX_SIZE = 50;
   var MIN_SIZE = 20;
   let COLORS = [0xdddddd, 0x333333, 0xaaaaaa, 0x212121];
-
+  let SPEED_MAX = 20;
+  let SPEED_MIN = 40;
 
   for (var i=0; i<SQUARE_COUNT; i++) {
     var x = Math.random() * WIDTH;
@@ -67,20 +83,28 @@ function addSquares() {
 
     let rot = Math.random() * Math.PI;
 
-    let s = new PIXI.Graphics();
-    s.beginFill(color);
-    s.drawRect(size * -1, size * -1, size, size);
-    s.position.x = x;
-    s.position.y = y;
-    s.rotation = rot; 
+    // debugger
+    let d20Sprite = new PIXI.Sprite(d20Texture);
+    d20Sprite.x = 300;
+    d20Sprite.y = 300;
+
+    d20Sprite.tint = "0x00FF00";
+
+    // let s = new PIXI.Graphics();
+    // d20Sprite.beginFill(color);
+    // s.drawRect(size * -1, size * -1, size, size);
+    d20Sprite.position.x = x;
+    d20Sprite.position.y = y;
+    d20Sprite.rotation = rot; 
 
     slist.push({
       size,
-      s,
-      r: Math.random() * WIDTH
+      s: d20Sprite,
+      r: Math.floor(Math.random() * WIDTH),
+      speed: ( Math.floor(Math.random() * SPEED_MAX) + SPEED_MIN ) / 1000
     });
 
-    container.addChild(s);
+    container.addChild(d20Sprite);
 
   }
 }
@@ -91,11 +115,33 @@ addSquares()
 
 
 
-
 function addText() {
-  var style = new PIXI.TextStyle({
+  var nameStyle = new PIXI.TextStyle({
+      fontFamily: 'Anonymous Pro',
+      fontSize: 120,
+      fontWeight: 'bold',
+      fill: ['#70da3c', '#5aa037'], // gradient
+      stroke: '#13250a',
+      strokeThickness: 1,
+      dropShadow: true,
+      dropShadowColor: '#000000',
+      dropShadowBlur: 4,
+      dropShadowAngle: Math.PI / 6,
+      dropShadowDistance: 6,
+      wordWrap: true,
+      wordWrapWidth: 800
+  });
+
+  var richTextName = new PIXI.Text('Brad Barrows', nameStyle);
+  richTextName.x = (WIDTH/2) - (richTextName.width/2);
+  richTextName.y = 180;
+
+  container.addChild(richTextName);
+
+/*
+  var noteStyle = new PIXI.TextStyle({
       fontFamily: 'Arial',
-      fontSize: 36,
+      fontSize: 60,
       fontStyle: 'italic',
       fontWeight: 'bold',
       fill: ['#ffffff', '#598dd0'], // gradient
@@ -107,23 +153,16 @@ function addText() {
       dropShadowAngle: Math.PI / 6,
       dropShadowDistance: 6,
       wordWrap: true,
-      wordWrapWidth: 440
+      wordWrapWidth: 800
   });
-
-  var richTextName = new PIXI.Text('Brad Barrows', style);
-  richTextName.x = WIDTH/2 - 120;
-  richTextName.y = 180;
-
-  container.addChild(richTextName);
-
-  var richTextScratch = new PIXI.Text('See Console Log', style);
-  richTextScratch.x = WIDTH/2 - 150;
+  var richTextScratch = new PIXI.Text('See Console Log', noteStyle);
+  richTextScratch.x = (WIDTH/2) - (richTextScratch.width/2);
   richTextScratch.y = 240;
 
   container.addChild(richTextScratch);  
+  */ 
 }
 addText();
-console.log("TEST")
 
 
 
@@ -143,8 +182,8 @@ console.log("TEST")
 
 
 // debugger;
-var builtInGlitchFilter = new GlitchFilter();
-builtInGlitchFilter.slices = 30;
+//var builtInGlitchFilter = new GlitchFilter();
+//builtInGlitchFilter.slices = 30;
 // builtInGlitchFilter.fillMode = 0; // 0 
 /* 
 Fill Modes:
@@ -154,9 +193,12 @@ Fill Modes:
 3 CLAMP
 4 MIRROR
 */
-builtInGlitchFilter.sampleSize = 2048;
+// builtInGlitchFilter.sampleSize = 2048;
 
-container.filters = [builtInGlitchFilter];
+// container.filters = [builtInGlitchFilter];
+
+
+var builtInAsciiFilter = new AsciiFilter();
 
 
 app.start();
@@ -166,13 +208,14 @@ app.ticker.add(function(delta) {
 
   for (var i = 0; i < slist.length; i++) {
     let s = slist[i].s;
+    let speed = slist[i].speed;
 
-    s.rotation += Math.cos(slist[i].r * 0.01) * 0.03;
+    s.rotation += Math.cos(slist[i].r * 0.01) * speed;
 
-    s.position.x += Math.sin(slist[i].r * 0.01) * 0.03 * slist[i].size;
-    s.position.y += Math.sin(slist[i].r * 0.01) * 0.03 * slist[i].size;
+    s.position.x += Math.sin(slist[i].r * 0.01) * speed * slist[i].size;
+    s.position.y += Math.cos(slist[i].r * 0.01) * speed * slist[i].size;
 
-    slist[i].r = slist[i].r + 1;
+    slist[i].r += 1;
   }  
   
 
@@ -193,6 +236,30 @@ app.ticker.add(function(delta) {
 
 
 });
+
+var FILTER_DELAY = 3000;
+function globalOnmousemove(event) {
+  // Start ASCII Filter
+  var lastMovement = (new Date()).getTime();
+  container.filters = [builtInAsciiFilter];
+
+  let checkFilterFunc = function () {
+    console.log('Checking filter delay');
+    let curTime = (new Date()).getTime();
+    if (lastMovement + FILTER_DELAY < curTime) {
+      container.filters = [];
+      console.log('Clearing out filters');
+    } else {
+      console.log('Leaving filter in place');
+      checkFilterFunc();
+    }
+    
+  }
+
+  setTimeout(checkFilterFunc, FILTER_DELAY);
+}
+
+window.onmousemove = globalOnmousemove;
 
 
 
