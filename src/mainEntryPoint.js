@@ -55,6 +55,8 @@ app.stage.addChild(container);
 // Just using the SVG and loading it as a texture
 let d20Texture = new PIXI.Texture.fromImage('./imgs/d20.svg', undefined, undefined, 1.0)
 
+let githubTexture = new PIXI.Texture.fromImage('./imgs/github.svg', undefined, undefined, 1.0)
+
 //let d20Sprite = new PIXI.Sprite(d20Texture);
 //d20Sprite.x = 300;
 //d20Sprite.y = 300;
@@ -96,6 +98,20 @@ function addSquares() {
     d20Sprite.position.x = x;
     d20Sprite.position.y = y;
     d20Sprite.rotation = rot; 
+
+    d20Sprite.buttonMode = true;
+    d20Sprite.interactive = true;
+
+    function mouseEventHandler(e) {
+      //console.log(`D20 E ${e}`);
+      //debugger
+    }
+    d20Sprite
+      .on('pointerdown', mouseEventHandler)
+      .on('pointerup', mouseEventHandler)
+      .on('pointerupoutside', mouseEventHandler)
+      .on('w', mouseEventHandler)
+      .on('pointerout', mouseEventHandler);    
 
     slist.push({
       size,
@@ -198,13 +214,50 @@ Fill Modes:
 // container.filters = [builtInGlitchFilter];
 
 
-var builtInAsciiFilter = new AsciiFilter();
+//var builtInAsciiFilter = new AsciiFilter();
+
+
+
+
+
+
+let githubSprite = new PIXI.Sprite(githubTexture);
+
+
+    function githubMouseEventHandler(e) {
+      console.log(`github E ${e}`);
+      window.location = 'https://github.com/bbarrows';      
+    }
+
+    githubSprite
+      .on('pointerdown', githubMouseEventHandler)
+      .on('pointerup', githubMouseEventHandler)
+      .on('pointerupoutside', githubMouseEventHandler)
+      .on('w', githubMouseEventHandler)
+      .on('pointerout', githubMouseEventHandler);    
+
+
+githubSprite.interactive = true;
+githubSprite.buttonMode = true;
+githubSprite.anchor.set(0.5);
+
+githubSprite.x = 100;
+githubSprite.y = 600;
+container.addChild(githubSprite);
+
+
 
 
 app.start();
 
 var steps = 0;
 app.ticker.add(function(delta) {
+
+  // console.log(`Step ${steps}`)
+  steps += 1;
+  if (steps > window.innerWidth) {
+    steps = 0;
+  }
 
   for (var i = 0; i < slist.length; i++) {
     let s = slist[i].s;
@@ -218,6 +271,9 @@ app.ticker.add(function(delta) {
     slist[i].r += 1;
   }  
   
+
+  githubSprite.x = steps;
+  githubSprite.y = (Math.sin(steps * 0.05) * 100) + 500;  
 
 
 
@@ -234,9 +290,9 @@ app.ticker.add(function(delta) {
   //builtInGlitchFilter.slices = Math.floor(Math.random() * 10) + 20;
   
 
-
 });
 
+/*
 var FILTER_DELAY = 3000;
 function globalOnmousemove(event) {
   // Start ASCII Filter
@@ -244,13 +300,13 @@ function globalOnmousemove(event) {
   container.filters = [builtInAsciiFilter];
 
   let checkFilterFunc = function () {
-    console.log('Checking filter delay');
+    // console.log('Checking filter delay');
     let curTime = (new Date()).getTime();
     if (lastMovement + FILTER_DELAY < curTime) {
       container.filters = [];
-      console.log('Clearing out filters');
+      // console.log('Clearing out filters');
     } else {
-      console.log('Leaving filter in place');
+      // console.log('Leaving filter in place');
       checkFilterFunc();
     }
     
@@ -260,6 +316,7 @@ function globalOnmousemove(event) {
 }
 
 window.onmousemove = globalOnmousemove;
+*/
 
 
 
