@@ -28,7 +28,7 @@ import { AsciiFilter } from 'pixi-filters';
 
 // Square sin wave idea and code basically from the same guy
 
-console.log("I am trying to learn PIXI. This is from this guys work: http://gun.net.au/");
+console.log("I am trying to learn PIXI. The animated objects movement code is from this guys work: http://gun.net.au/");
 
 
 var WIDTH = window.innerWidth;
@@ -38,28 +38,13 @@ var app = new PIXI.Application(WIDTH, HEIGHT, {backgroundColor : 0x212121});
 $("#fullcover")[0].appendChild(app.view);
 
 
-function customWindowResize() {
-    if (window.innerWidth / window.innerHeight >= ratio) {
-        var w = window.innerHeight * ratio;
-        var h = window.innerHeight;
-    } else {
-        var w = window.innerWidth;
-        var h = window.innerWidth / ratio;
-    }
-    app.renderer.view.style.width = w + 'px';
-    app.renderer.view.style.height = h + 'px';
-}
-
-
 var scale = scaleToWindow(app.view);
 window.addEventListener("resize", function(event){ 
   scaleToWindow(app.view);
-  customWindowResize();
 });
 
 $(window).resize(function(){
   scaleToWindow(app.view);
-  customWindowResize();
 });
 
 var container = new PIXI.Container();
@@ -266,6 +251,14 @@ githubSprite.y = 600;
 container.addChild(githubSprite);
 
 */
+
+
+
+
+
+//var aFilter = new AFilter();
+//container.filters = [aFilter];
+
 
 
 app.start();

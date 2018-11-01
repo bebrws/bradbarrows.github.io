@@ -1,52 +1,59 @@
 
-let myFilterFrag = `
-precision mediump float;
 
+let aFilterFrag = `
+precision mediump float;
 uniform sampler2D uSampler;
+uniform float rand;
+uniform float timer;
+uniform float val2;
+uniform float val3;
+uniform vec4 dimensions;
 varying vec2 vTextureCoord;
 
-uniform float customUniform;
+uniform vec2 u_resolution;
+
+float plot(vec2 st, float pct){
+  return  smoothstep( pct-0.02, pct, st.y) -
+          smoothstep( pct, pct+0.02, st.y);
+}
+
 
 void main (void)
 {
-   vec2 uvs = vTextureCoord.xy;
-   vec4 pixel = texture2D(uSampler, vTextureCoord);
-   pixel.r = uvs.y + sin(customUniform);
-   pixel.g = uvs.x + sin(customUniform);
-   pixel.b = uvs.y + cos(customUniform);
-   gl_FragColor = pixel;
+  float trueWidth = dimensions.x;
+  float trueHeight = dimensions.y;
+  vec2 pos = vTextureCoord * vec2(dimensions);
+
+  vec2 st = gl_FragCoord.xy/u_resolution;
+
+  float y = st.x;
+
+  vec3 color = vec3(y);
+
+  // Plot a line
+  float pct = plot(st, y);
+  color = (1.0 - pct) * color + pct * vec3(0.0,1.0,0.0);
+
+  //gl_FragColor = vec4(sin(st.x), cos(st.x), sin(st.x),1.0);
+
+
+  //gl_FragColor.rgba = vec4(1.0, 1.0, 0.0, 1.0);
+  gl_FragColor.rgba = vec4(color, 1.0);
 }
 `;
 
 
-function MyFilter() {
-    PIXI.AbstractFilter.call(this,
-      
+
+function AFilter() {
+    PIXI.Filter.call(this,
       null,
-
-      myFilterFrag,
-
-
-    {
-        customUniform: {type: '1f', value: 0.001}
-    }
+      aFilterFrag,
+      {}
     );
-
 };
 
-MyFilter.prototype = Object.create(PIXI.AbstractFilter.prototype);
-MyFilter.prototype.constructor = MyFilter;
-
-Object.defineProperty(MyFilter.prototype, 'rand', {
-    get: function() {
-        return this.uniforms.rand.value;
-    },
-    set: function(value) {
-        this.dirty = true;
-        this.uniforms.rand.value = value;
-    }
-});
-
+AFilter.prototype = Object.create(PIXI.Filter.prototype);
+AFilter.prototype.constructor = AFilter;
 
 
 
