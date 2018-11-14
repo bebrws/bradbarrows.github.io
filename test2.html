@@ -42,7 +42,7 @@ app.stage.addChild(container);
 
 let d20Texture = new PIXI.Texture.fromImage('./imgs/d20.svg', undefined, undefined, 1.0)
 let d20Sprite = new PIXI.Sprite(d20Texture);
-d20Sprite.position.x = 100;
+d20Sprite.position.x = 500;
 d20Sprite.position.y = 100;
 
 container.addChild(d20Sprite);
@@ -58,7 +58,8 @@ var Engine = Matter.Engine,
     Render = Matter.Render,
     World = Matter.World,
     Events = Matter.Events,
-    Bodies = Matter.Bodies;
+    Bodies = Matter.Bodies,
+    Body = Matter.Body;
      
 var engine = Engine.create();
 
@@ -73,7 +74,7 @@ var render = Render.create({
              });
               
 //var boxA = Bodies.rectangle(400, 200, 80, 80);
-var ball = Bodies.circle(380, 100, 40, 5);
+var ball = Bodies.circle(500, 100, 40, 5);
 //var ballB = Bodies.circle(460, 10, 40, 10);
 var ground = Bodies.rectangle(WIDTH/2, HEIGHT+30, WIDTH, 60, { isStatic: true });
  
@@ -81,14 +82,49 @@ var ground = Bodies.rectangle(WIDTH/2, HEIGHT+30, WIDTH, 60, { isStatic: true })
 World.add(engine.world, [ball, ground]);
  
 Engine.run(engine);
+
+
+
 Render.run(render);
 
-Events.on(engine, 'tick', function(event) {
-d20Sprite.position.y = ball.position.y;
-d20Sprite.position.x = ball.position.x;
 
+
+
+
+
+Events.on(engine, 'tick', function(event) {
+  d20Sprite.position.y = ball.position.y;
+  d20Sprite.position.x = ball.position.x;
 });
 
+
+
+
+
+
+
+
+document.onkeydown = checkKey;
+
+function checkKey(e) {
+
+  e = e || window.event;
+
+  if (e.keyCode == '87') { 
+    // w - up
+    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: 0.0, y: -0.20});
+  } else if (e.keyCode == '83') { 
+    // s - down
+    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: 0.0, y: 0.09});
+  } else if (e.keyCode == '65') { 
+    // a - left
+    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: -0.2, y: 0.0});
+  } else if (e.keyCode == '68') { 
+    // d - right
+    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: 0.2, y: 0.0});
+  }
+
+}
 
 </script>
 </body>
