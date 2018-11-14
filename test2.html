@@ -74,12 +74,15 @@ var render = Render.create({
              });
               
 //var boxA = Bodies.rectangle(400, 200, 80, 80);
-var ball = Bodies.circle(500, 100, 40, 5);
+var ball = Bodies.circle(500, 100, 20, 5);
 //var ballB = Bodies.circle(460, 10, 40, 10);
 var ground = Bodies.rectangle(WIDTH/2, HEIGHT+30, WIDTH, 60, { isStatic: true });
+var left_wall = Bodies.rectangle(0, HEIGHT/2, 30, HEIGHT, { isStatic: true });
+var right_wall = Bodies.rectangle(WIDTH, HEIGHT/2, 30, HEIGHT, { isStatic: true });
+var top_wall = Bodies.rectangle(WIDTH/2, 0, WIDTH, 10, { isStatic: true });
  
 //World.add(engine.world, [boxA, ballA, ballB, ground]);
-World.add(engine.world, [ball, ground]);
+World.add(engine.world, [ball, ground, left_wall, right_wall, top_wall]);
  
 Engine.run(engine);
 
@@ -112,16 +115,16 @@ function checkKey(e) {
 
   if (e.keyCode == '87') { 
     // w - up
-    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: 0.0, y: -0.20});
+    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: 0.0, y: -0.05});
   } else if (e.keyCode == '83') { 
     // s - down
-    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: 0.0, y: 0.09});
+    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: 0.0, y: 0.05});
   } else if (e.keyCode == '65') { 
     // a - left
-    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: -0.2, y: 0.0});
+    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: -0.05, y: 0.0});
   } else if (e.keyCode == '68') { 
     // d - right
-    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: 0.2, y: 0.0});
+    Body.applyForce( ball, {x: ball.position.x, y: ball.position.y}, {x: 0.05, y: 0.0});
   }
 
 }
