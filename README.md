@@ -41,3 +41,17 @@ To edit the CSS don't edit file in the .theme folder.
 For example, modify this file:
 
 ```bradbarrows.github.io/sass/base/_layout.scss```
+
+
+## Deploy
+From 
+http://octopress.org/docs/deploying/github/
+
+```
+rake setup_github_pages
+
+# Pass in
+# git@github.com:bradebarrows/bradbarrows.github.io.git
+
+rake deploy
+```
