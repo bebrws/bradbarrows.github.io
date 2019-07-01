@@ -72,3 +72,8 @@ And also set
 in the file
 ```bradbarrows.github.io/Rakefile```
 
+
+
+Since my setup is all bad using one branch I have to:
+
+rake generate; rake deploy; git pull --rebase origin master; git push origin master 

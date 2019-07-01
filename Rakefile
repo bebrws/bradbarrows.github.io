@@ -256,6 +256,10 @@ multitask :push do
     Bundler.with_clean_env { system "git pull" }
   end
   (Dir["#{deploy_dir}/*"]).each { |f| rm_rf(f) }
+  puts "Copying CNAME to public dir #{public_dir}"
+  cp_r "#{public_dir}/../CNAME", public_dir
+  puts "Copying CNAME to deploy dir which is #{deploy_dir}"  
+  cp_r "#{public_dir}/../CNAME", deploy_dir
   Rake::Task[:copydot].invoke(public_dir, deploy_dir)
   puts "\n## Copying #{public_dir} to #{deploy_dir}"
   cp_r "#{public_dir}/.", deploy_dir
