@@ -1,1 +1,1 @@
-bundle exec rake generate
+bundle exec jekyll build
