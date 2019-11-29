@@ -4,7 +4,7 @@
   <title><![CDATA[Brad Barrows]]></title>
   <link href="http://bradebarrows.github.io/atom.xml" rel="self"/>
   <link href="http://bradebarrows.github.io/"/>
-  <updated>2019-07-01T07:02:43-07:00</updated>
+  <updated>2019-11-21T12:55:58-08:00</updated>
   <id>http://bradebarrows.github.io/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -14,11 +14,63 @@
 
   
   <entry>
-    <title type="html"><![CDATA[OSX]]></title>
-    <link href="http://bradebarrows.github.io/blog/2019/07/01/yubikey-and-osx/"/>
+    <title type="html"><![CDATA[OSX - Manually configuring System Preferences Security And Privacy settings]]></title>
+    <link href="http://bradebarrows.github.io/blog/2019/07/01/system-preferences-security-and-privacy-osx/"/>
     <updated>2019-07-01T03:40:47-07:00</updated>
-    <id>http://bradebarrows.github.io/blog/2019/07/01/yubikey-and-osx</id>
-    <content type="html"><![CDATA[<p>Hello World</p>
+    <id>http://bradebarrows.github.io/blog/2019/07/01/system-preferences-security-and-privacy-osx</id>
+    <content type="html"><![CDATA[<p>I have a laptop which I wanted to be able to check the status of remotely.</p>
+
+<p>For remote access on OSX I use Jump Desktop. On Catalina I ran into an issue where after installing Jump Desktop Connect I was not able to add Jump Desktop Connect to my Security And Privacy settings to enable the Screen Recording permission.</p>
+
+<p>I was able to manually do this after some grepping.</p>
+
+<p>I was able to figure out that a sqlite DB exists that contains all the OSX Catalina Security and Privacy settings.</p>
+
+<p>This DB can be opened with:</p>
+
+<p>sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db</p>
+
+<p>The table of interest is called acccess.</p>
+
+<p>To get some information on this table run:</p>
+
+<p>PRAGMA table_info(access);
+.schema access</p>
+
+<p>You will see it has the followign columns:</p>
+
+<p>  0|service|TEXT|1||1
+  1|client|TEXT|1||2
+  2|client_type|INTEGER|1||3
+  3|allowed|INTEGER|1||0
+  4|prompt_count|INTEGER|1||0
+  5|csreq|BLOB|0||0
+  6|policy_id|INTEGER|0||0
+  7|indirect_object_identifier_type|INTEGER|0||0
+  8|indirect_object_identifier|TEXT|0||4
+  9|indirect_object_code_identity|BLOB|0||0
+  10|flags|INTEGER|0||0
+  11|last_modified|INTEGER|1|CAST(strftime(&lsquo;%s&rsquo;,&lsquo;now&rsquo;) AS INTEGER)|0</p>
+
+<p>I then found a row for a service that had the permissions I wanted for Jump Desktop Connect</p>
+
+<p>  kTCCServiceScreenCapture|com.apple.screensharing.agent|0|0|1||||UNUSED||0|1573525900</p>
+
+<p>And then a row for Jump Desktop Connect itself:</p>
+
+<p>  kTCCServiceAccessibility|com.p5sys.jump.connect|0|1|1|??|||UNUSED||0|1572360434</p>
+
+<p>Now I have the client string I need and an example row. I duplicated the screensharing service row but switched out the Jump Desktop Connect client string and ran the following in the sqlite3 client:</p>
+
+<p>  INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+  &lsquo;kTCCServiceScreenCapture&rsquo;,&lsquo;com.p5sys.jump.connect&rsquo;,0,0,1,NULL,NULL,NULL,&lsquo;UNUSED&rsquo;,NULL,0,1573525900);</p>
+
+<p>Then I was able to open System Preferences Security and Privacy settins and enable the Screen Recording permission on the application. It finally was showing the list. I probably could also just run</p>
+
+<p>  INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+  &lsquo;kTCCServiceScreenCapture&rsquo;,&lsquo;com.p5sys.jump.connect&rsquo;,0,1,1,NULL,NULL,NULL,&lsquo;UNUSED&rsquo;,NULL,0,1573525900);</p>
+
+<p>To automatically enable this setting but I did not test this.</p>
 ]]></content>
   </entry>
   
