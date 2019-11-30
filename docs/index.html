@@ -47,11 +47,11 @@
 
   <div id='links'>
     <ul>
-      <li><a href="https://github.com/bradebarrows/"><i class="fab fa-github fa-2x"></i></a></li>
-      <li><a href="https://www.linkedin.com/in/bbarrows/"><i class="fab fa-linkedin fa-2x"></i></a></li>
-    </ul>    
+      <li><a href="https://github.com/bebrws/"><i class="fab fa-github fa-2x"></i></a></li>
+      <!--li><a href="https://www.linkedin.com/in/bbarrows/"><i class="fab fa-linkedin fa-2x"></i></a></li-->
+    </ul>
   </div>
-    
+
   <nav role="navigation">
   
 <form action="https://www.google.com/search" method="get">
@@ -109,47 +109,75 @@
 
 <p>This DB can be opened with:</p>
 
-<p>sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db</span></code></pre></td></tr></table></div></figure>
+
 
 <p>The table of interest is called acccess.</p>
 
 <p>To get some information on this table run:</p>
 
-<p>PRAGMA table_info(access);
-.schema access</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  PRAGMA table_info(access);
+</span><span class='line'>  .schema access</span></code></pre></td></tr></table></div></figure>
+
 
 <p>You will see it has the followign columns:</p>
 
-<p>  0|service|TEXT|1||1
-  1|client|TEXT|1||2
-  2|client_type|INTEGER|1||3
-  3|allowed|INTEGER|1||0
-  4|prompt_count|INTEGER|1||0
-  5|csreq|BLOB|0||0
-  6|policy_id|INTEGER|0||0
-  7|indirect_object_identifier_type|INTEGER|0||0
-  8|indirect_object_identifier|TEXT|0||4
-  9|indirect_object_code_identity|BLOB|0||0
-  10|flags|INTEGER|0||0
-  11|last_modified|INTEGER|1|CAST(strftime(&lsquo;%s&rsquo;,&lsquo;now&rsquo;) AS INTEGER)|0</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  0|service|TEXT|1||1
+</span><span class='line'>  1|client|TEXT|1||2
+</span><span class='line'>  2|client_type|INTEGER|1||3
+</span><span class='line'>  3|allowed|INTEGER|1||0
+</span><span class='line'>  4|prompt_count|INTEGER|1||0
+</span><span class='line'>  5|csreq|BLOB|0||0
+</span><span class='line'>  6|policy_id|INTEGER|0||0
+</span><span class='line'>  7|indirect_object_identifier_type|INTEGER|0||0
+</span><span class='line'>  8|indirect_object_identifier|TEXT|0||4
+</span><span class='line'>  9|indirect_object_code_identity|BLOB|0||0
+</span><span class='line'>  10|flags|INTEGER|0||0
+</span><span class='line'>  11|last_modified|INTEGER|1|CAST(strftime('%s','now') AS INTEGER)|0</span></code></pre></td></tr></table></div></figure>
+
 
 <p>I then found a row for a service that had the permissions I wanted for Jump Desktop Connect</p>
 
-<p>  kTCCServiceScreenCapture|com.apple.screensharing.agent|0|0|1||||UNUSED||0|1573525900</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  kTCCServiceScreenCapture|com.apple.screensharing.agent|0|0|1||||UNUSED||0|1573525900</span></code></pre></td></tr></table></div></figure>
+
 
 <p>And then a row for Jump Desktop Connect itself:</p>
 
-<p>  kTCCServiceAccessibility|com.p5sys.jump.connect|0|1|1|??|||UNUSED||0|1572360434</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  kTCCServiceAccessibility|com.p5sys.jump.connect|0|1|1|??|||UNUSED||0|1572360434</span></code></pre></td></tr></table></div></figure>
+
 
 <p>Now I have the client string I need and an example row. I duplicated the screensharing service row but switched out the Jump Desktop Connect client string and ran the following in the sqlite3 client:</p>
 
-<p>  INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
-  &lsquo;kTCCServiceScreenCapture&rsquo;,&lsquo;com.p5sys.jump.connect&rsquo;,0,0,1,NULL,NULL,NULL,&lsquo;UNUSED&rsquo;,NULL,0,1573525900);</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+</span><span class='line'>  'kTCCServiceScreenCapture','com.p5sys.jump.connect',0,0,1,NULL,NULL,NULL,'UNUSED',NULL,0,1573525900);</span></code></pre></td></tr></table></div></figure>
+
 
 <p>Then I was able to open System Preferences Security and Privacy settins and enable the Screen Recording permission on the application. It finally was showing the list. I probably could also just run</p>
 
-<p>  INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
-  &lsquo;kTCCServiceScreenCapture&rsquo;,&lsquo;com.p5sys.jump.connect&rsquo;,0,1,1,NULL,NULL,NULL,&lsquo;UNUSED&rsquo;,NULL,0,1573525900);</p>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+</span><span class='line'>  'kTCCServiceScreenCapture','com.p5sys.jump.connect',0,1,1,NULL,NULL,NULL,'UNUSED',NULL,0,1573525900);</span></code></pre></td></tr></table></div></figure>
+
 
 <p>To automatically enable this setting but I did not test this.</p>
 </div>
