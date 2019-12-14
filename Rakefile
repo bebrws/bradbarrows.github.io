@@ -16,7 +16,7 @@ deploy_branch  = "master"
 
 ## -- Misc Configs -- ##
 
-public_dir      = "public"    # compiled site directory
+public_dir      = "docs"    # compiled site directory
 source_dir      = "source"    # source file directory
 blog_index_dir  = 'source'    # directory for your blog's index page (if you put your index in source/blog/index.html, set this to 'source/blog')
 deploy_dir      = "docs"   # deploy directory (for Github pages deployment)
@@ -252,13 +252,13 @@ desc "deploy public directory to github pages"
 multitask :push do
   puts "## Deploying branch to Github Pages "
   puts "## Pulling any updates from Github Pages "
-  cd "#{deploy_dir}" do 
+  cd "#{deploy_dir}" do
     Bundler.with_clean_env { system "git pull" }
   end
   (Dir["#{deploy_dir}/*"]).each { |f| rm_rf(f) }
   puts "Copying CNAME to public dir #{public_dir}"
   cp_r "#{public_dir}/../CNAME", public_dir
-  puts "Copying CNAME to deploy dir which is #{deploy_dir}"  
+  puts "Copying CNAME to deploy dir which is #{deploy_dir}"
   cp_r "#{public_dir}/../CNAME", deploy_dir
   Rake::Task[:copydot].invoke(public_dir, deploy_dir)
   puts "\n## Copying #{public_dir} to #{deploy_dir}"
