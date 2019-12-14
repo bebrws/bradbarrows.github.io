@@ -4,7 +4,7 @@
   <title><![CDATA[Brad Barrows]]></title>
   <link href="http://bradebarrows.github.io/atom.xml" rel="self"/>
   <link href="http://bradebarrows.github.io/"/>
-  <updated>2019-12-13T22:16:28-08:00</updated>
+  <updated>2019-12-14T13:41:02-08:00</updated>
   <id>http://bradebarrows.github.io/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -12,6 +12,209 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Wireguard]]></title>
+    <link href="http://bradebarrows.github.io/blog/2019/12/14/wireguard/"/>
+    <updated>2019-12-14T13:14:19-08:00</updated>
+    <id>http://bradebarrows.github.io/blog/2019/12/14/wireguard</id>
+    <content type="html"><![CDATA[<p>How to setup a Wireguard VPN for free!</p>
+
+<ol>
+<li><p>Go grab a free account if you haven&rsquo;t already signed for one from <a href="https://azure.microsoft.com/en-us/free/search/?&amp;ef_id=EAIaIQobChMIs6y5wYe25gIVFtRkCh3jJANyEAAYASABEgK6pvD_BwE:G:s&amp;OCID=AID2000128_SEM_hDTj6HPx&amp;MarinID=hDTj6HPx_287547081826_azure%20free%20account_e_c_TAwBQrMX_44568976297_kwd-300666823650&amp;lnkd=Google_Azure_Brand&amp;gclid=EAIaIQobChMIs6y5wYe25gIVFtRkCh3jJANyEAAYASABEgK6pvD_BwE">Azure</a> or you could use your AWS free compute hours with a small EC2 instance.</p></li>
+<li><p>Create a the small VM that fits in the free price range</p></li>
+<li><p>Set the networking rules to allow ANY traffic TCP/UDP over port 51820 (Wireguard really only used UDP though I am pretty sure).
+In azure you would do this by creating the <a href="https://azuremarketplace.microsoft.com/en-us/marketplace/apps/microsoft.freeaccountvirtualmachine?tab=Overview">Free VM</a> (which can be created with a few clicks from that link after creating your account). Then once the VM is created and ready you and you have a status of &ldquo;Your deployment is complete&rdquo; you can open the &ldquo;Deployment details&rdquo; section and click on the Resource link of Type &ldquo;Microsoft.Compute/virtumachines&rdquo;.</p>
+
+<p>In the left sidebar there will be a link for Networking. Click this.</p>
+
+<p>On the networking page click &ldquo;Add Inbound port rule&rdquo;.</p>
+
+<p>Create a rule with the following:</p>
+
+<p><code>`
+   Source: Any
+   Source port range: *
+   Destination: Any
+   Desitnation port range: 51820
+   Protocal: Any
+   Action: Allow
+   PriorityL 380
+   Name: Port_51820
+   Description: Wireguard
+</code></p></li>
+<li><p>SSH into your VM.</p></li>
+<li><p>Run the following:</p></li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># Generate public and private keys
+</span><span class='line'>
+</span><span class='line'>umask 077
+</span><span class='line'>wg genkey | tee privatekey | wg pubkey &gt; publickey
+</span><span class='line'>
+</span><span class='line'># Run these as root
+</span><span class='line'>
+</span><span class='line'>sudo su
+</span><span class='line'>
+</span><span class='line'>cat &lt;&lt; EOF &gt;&gt; /etc/sysctl.conf
+</span><span class='line'>net.ipv4.ip_forward=1
+</span><span class='line'>net.ipv6.conf.all.forwarding=1
+</span><span class='line'>EOF
+</span><span class='line'>
+</span><span class='line'>add-apt-repository ppa:wireguard/wireguard
+</span><span class='line'>apt-get update
+</span><span class='line'>apt-get install wireguard
+</span><span class='line'>
+</span><span class='line'>echo "This is the Server Private Key:"
+</span><span class='line'>cat privatekey
+</span><span class='line'>
+</span><span class='line'>echo "This is the Server Public Key:"
+</span><span class='line'>cat publickey
+</span><span class='line'>
+</span><span class='line'>echo "This will be the Client Private Key if you need to generate one (using the OSX Wireguardd App?):"
+</span><span class='line'>wg genkey | sudo tee clientprivatekey
+</span><span class='line'>cat clientprivatekey</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>Now if you are using the OSX Wireguard App you will create a new &ldquo;empty tunnnel&rdquo; by clicking the bottom left plus button. Paste in the following replacing <IPAddressOfYourServer> with your VM IP and then replace <ClientPrivateKey> with the value from the clientprivatekey file. <ServerPublicKey> will be replaced with the Server Public Key:</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>[Interface]
+</span><span class='line'>PrivateKey = &lt;ClientPrivateKey&gt;
+</span><span class='line'>ListenPort = 21841
+</span><span class='line'>Address = 192.168.2.2/32
+</span><span class='line'>DNS = 1.1.1.1
+</span><span class='line'>
+</span><span class='line'>[Peer]
+</span><span class='line'>PublicKey = &lt;ServerPublicKey&gt;
+</span><span class='line'>AllowedIPs = 0.0.0.0/0, ::/0
+</span><span class='line'>Endpoint = &lt;IPAddressOfYourServer&gt;:51820
+</span><span class='line'>PersistentKeepalive = 25</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>After replacing the values I mentioned and copying this into the Wireguard OSX App you will have a Client Public Key generated. It will be right above the text box you paste the configuration into. Take this value and replace <PublicKeyFromClient> with it. Replace <PrivateKeyfromthe2ndComnmandAbove> with the Server Private Key that was printed out in the last set of commands you ran on the VM. The run the following on your VM:</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cat &lt;&lt; EOF &gt;&gt; /etc/wireguard/wg0.conf
+</span><span class='line'>[Interface]
+</span><span class='line'>Address = 192.168.2.1
+</span><span class='line'>PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE; ip6tables -A FORWARD -i wg0 -j ACCEPT; ip6tables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+</span><span class='line'>PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE; ip6tables -D FORWARD -i wg0 -j ACCEPT; ip6tables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+</span><span class='line'>ListenPort = 51820
+</span><span class='line'>PrivateKey = &lt;PrivateKeyfromthe2ndComnmandAbove&gt;
+</span><span class='line'>DNS = 1.1.1.1
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>[Peer]
+</span><span class='line'>PublicKey = &lt;PublicKeyFromClient&gt;
+</span><span class='line'>AllowedIPs = 192.168.2.2/32
+</span><span class='line'>EOF
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You may also want to setup a firewall on you VM:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo ufw allow 22/tcp
+</span><span class='line'>sudo ufw allow 51820/udp
+</span><span class='line'>sudo ufw enable</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is optional.</p>
+
+<ol>
+<li>It is time to start the Wiregaurd server.
+Run:</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo wg-quick up wg0
+</span><span class='line'>sudo systemctl enable wg-quick@wg0 # Set wireguard to run on system start
+</span><span class='line'>sudo wg show # Check the status</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note: after every change to your /etc/wiregaurd/wg0.conf file you will need to bring the wiregaurd service down and back up again:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo wg-quick down wg0
+</span><span class='line'>sudo wg-quick up wg0</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>You should now be able to go back to you Wireguard client and activate the connection. Google &ldquo;What Is My IP&rdquo; and verify that your IP has changed. You could then also try checking if you have DNS Leaks. Note that I am using Cloudflare DNS. I believe for a really secure VPN you would want to install DNS on your VPN as well but I have not bothered to attempt that yet.</li>
+</ol>
+
+
+<p>Other resources:</p>
+
+<p><a href="https://securityespresso.org/tutorials/2019/03/22/vpn-server-using-wireguard-on-ubuntu/">Another Ubuntu based tutorial</a></p>
+
+<p><a href="https://www.linode.com/docs/networking/vpn/set-up-wireguard-vpn-on-ubuntu/">Linode&rsquo;s tutorial which I had trouble with</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[SPPlus]]></title>
