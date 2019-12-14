@@ -103,7 +103,7 @@ EOF
 ```
 
 
-You may also want to setup a firewall on you VM:
+You may also want to setup a firewall on your VM by running:
 
 ```
 sudo ufw allow 22/tcp
@@ -114,7 +114,7 @@ sudo ufw enable
 This is optional.
 
 8. It is time to start the Wiregaurd server.
-Run:
+Run this on your VM:
 ```
 sudo wg-quick up wg0
 sudo systemctl enable wg-quick@wg0 # Set wireguard to run on system start

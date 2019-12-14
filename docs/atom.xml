@@ -4,7 +4,7 @@
   <title><![CDATA[Brad Barrows]]></title>
   <link href="http://bradebarrows.github.io/atom.xml" rel="self"/>
   <link href="http://bradebarrows.github.io/"/>
-  <updated>2019-12-14T13:42:43-08:00</updated>
+  <updated>2019-12-14T13:44:19-08:00</updated>
   <id>http://bradebarrows.github.io/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -168,7 +168,7 @@ In azure you would do this by creating the <a href="https://azuremarketplace.mic
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>You may also want to setup a firewall on you VM:</p>
+<p>You may also want to setup a firewall on your VM by running:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -182,7 +182,7 @@ In azure you would do this by creating the <a href="https://azuremarketplace.mic
 
 <ol>
 <li>It is time to start the Wiregaurd server.
-Run:</li>
+Run this on your VM:</li>
 </ol>
 
 
