@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Brad Barrows]]></title>
+  <link href="http://bradebarrows.github.io/atom.xml" rel="self"/>
+  <link href="http://bradebarrows.github.io/"/>
+  <updated>2019-12-13T22:16:28-08:00</updated>
+  <id>http://bradebarrows.github.io/</id>
+  <author>
+    <name><![CDATA[Brad Barrows]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[SPPlus]]></title>
+    <link href="http://bradebarrows.github.io/blog/2019/12/13/spplus/"/>
+    <updated>2019-12-13T21:42:58-08:00</updated>
+    <id>http://bradebarrows.github.io/blog/2019/12/13/spplus</id>
+    <content type="html"><![CDATA[<p>A demo video:
+<img src="http://bradebarrows.github.io/images/spplus.gif"></p>
+
+<p>The code is located at
+<a href="https://github.com/bebrws/SPPlusSIMBL">My SPPlusSIMBL project Github page</a></p>
+
+<p>This is a MacForge (used to be MySIMBL) plugin that hooks into Spotlight.</p>
+
+<p>When you type any command starting with &ldquo;bb &rdquo; and ending in &ldquo;;&rdquo; it will execute it in a zsh shell and bring up a transparent window showing the command output. It is basically a transparent terminal window which you can bring up from spotlight and hide through spotlight.</p>
+
+<p>Just type &ldquo;c;&rdquo; to make the terminal window disappear;</p>
+
+<p>Once you bring the transparent terminal window up with some command like:
+<code>bb ls;</code></p>
+
+<p>you can click in the bottom TextView on the bottom of the window and type any command. When the command ends in &ldquo;;&rdquo; it will be executed.</p>
+
+<p>The demo video probably shows this better than I will explain it.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[OSX - Manually configuring System Preferences Security And Privacy settings]]></title>
+    <link href="http://bradebarrows.github.io/blog/2019/07/01/system-preferences-security-and-privacy-osx/"/>
+    <updated>2019-07-01T03:40:47-07:00</updated>
+    <id>http://bradebarrows.github.io/blog/2019/07/01/system-preferences-security-and-privacy-osx</id>
+    <content type="html"><![CDATA[<p>I have a laptop which I wanted to be able to check the status of remotely.</p>
+
+<p>For remote access on OSX I was using Jump Desktop.I had this same issue with RealVNC and other remote desktop services though.</p>
+
+<p>Specifically, on Catalina I ran into an issue where after installing Jump Desktop Connect. I was not able to add Jump Desktop Connect to my Security And Privacy settings to enable the Screen Recording permission.</p>
+
+<p>After some grepping.I figured out that a sqlite DB exists that contains all the OSX Catalina Security and Privacy settings.</p>
+
+<p>This DB can be opened with:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The table of interest is called acccess.</p>
+
+<p>To get some information on this table run:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  PRAGMA table_info(access);
+</span><span class='line'>  .schema access</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You will see it has the followign columns:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  0|service|TEXT|1||1
+</span><span class='line'>  1|client|TEXT|1||2
+</span><span class='line'>  2|client_type|INTEGER|1||3
+</span><span class='line'>  3|allowed|INTEGER|1||0
+</span><span class='line'>  4|prompt_count|INTEGER|1||0
+</span><span class='line'>  5|csreq|BLOB|0||0
+</span><span class='line'>  6|policy_id|INTEGER|0||0
+</span><span class='line'>  7|indirect_object_identifier_type|INTEGER|0||0
+</span><span class='line'>  8|indirect_object_identifier|TEXT|0||4
+</span><span class='line'>  9|indirect_object_code_identity|BLOB|0||0
+</span><span class='line'>  10|flags|INTEGER|0||0
+</span><span class='line'>  11|last_modified|INTEGER|1|CAST(strftime('%s','now') AS INTEGER)|0</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I then found a row for a service that had the permissions I wanted for Jump Desktop Connect</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  kTCCServiceScreenCapture|com.apple.screensharing.agent|0|0|1||||UNUSED||0|1573525900</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And then a row for Jump Desktop Connect itself:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  kTCCServiceAccessibility|com.p5sys.jump.connect|0|1|1|??|||UNUSED||0|1572360434</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now I have the client string I need and an example row. I duplicated the screensharing service row but switched out the Jump Desktop Connect client string and ran the following in the sqlite3 client:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+</span><span class='line'>  'kTCCServiceScreenCapture','com.p5sys.jump.connect',0,0,1,NULL,NULL,NULL,'UNUSED',NULL,0,1573525900);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then I was able to open System Preferences Security and Privacy settins and enable the Screen Recording permission on the application. It finally was showing the list. I probably could also just run</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+</span><span class='line'>  'kTCCServiceScreenCapture','com.p5sys.jump.connect',0,1,1,NULL,NULL,NULL,'UNUSED',NULL,0,1573525900);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To automatically enable this setting but I did not test this.</p>
+]]></content>
+  </entry>
+  
+</feed>

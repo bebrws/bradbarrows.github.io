@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Brad Barrows</title>
+  <meta name="author" content="Brad Barrows">
+
+  
+  <meta name="description" content="A demo video: The code is located at
+My SPPlusSIMBL project Github page This is a MacForge (used to be MySIMBL) plugin that hooks into Spotlight. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bradebarrows.github.io">
+  <link href="/favicon.ico" rel="icon">
+  
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Brad Barrows" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+  
+
+</head>
+
+<body   class="no-sidebar"  >
+  <header role="banner"><hgroup>
+  <h1>Brad Barrows</h1>
+  
+    <h2><a href="/">Thoughts and Notes</a></h2>
+  
+</hgroup>
+
+</header>
+
+  <div id='links'>
+    <ul>
+      <li><a href="https://github.com/bebrws/"><i class="fab fa-github fa-2x"></i></a></li>
+      <!--li><a href="https://www.linkedin.com/in/bbarrows/"><i class="fab fa-linkedin fa-2x"></i></a></li-->
+    </ul>
+  </div>
+
+  <nav role="navigation">
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:bradebarrows.github.io" />
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2019/12/13/spplus/">SPPlus</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-12-13T21:42:58-08:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>A demo video:
+<img src="/images/spplus.gif"></p>
+
+<p>The code is located at
+<a href="https://github.com/bebrws/SPPlusSIMBL">My SPPlusSIMBL project Github page</a></p>
+
+<p>This is a MacForge (used to be MySIMBL) plugin that hooks into Spotlight.</p>
+
+<p>When you type any command starting with &ldquo;bb &rdquo; and ending in &ldquo;;&rdquo; it will execute it in a zsh shell and bring up a transparent window showing the command output. It is basically a transparent terminal window which you can bring up from spotlight and hide through spotlight.</p>
+
+<p>Just type &ldquo;c;&rdquo; to make the terminal window disappear;</p>
+
+<p>Once you bring the transparent terminal window up with some command like:
+<code>bb ls;</code></p>
+
+<p>you can click in the bottom TextView on the bottom of the window and type any command. When the command ends in &ldquo;;&rdquo; it will be executed.</p>
+
+<p>The demo video probably shows this better than I will explain it.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2019/07/01/system-preferences-security-and-privacy-osx/">OSX - Manually Configuring System Preferences Security and Privacy Settings</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2019-07-01T03:40:47-07:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I have a laptop which I wanted to be able to check the status of remotely.</p>
+
+<p>For remote access on OSX I was using Jump Desktop.I had this same issue with RealVNC and other remote desktop services though.</p>
+
+<p>Specifically, on Catalina I ran into an issue where after installing Jump Desktop Connect. I was not able to add Jump Desktop Connect to my Security And Privacy settings to enable the Screen Recording permission.</p>
+
+<p>After some grepping.I figured out that a sqlite DB exists that contains all the OSX Catalina Security and Privacy settings.</p>
+
+<p>This DB can be opened with:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The table of interest is called acccess.</p>
+
+<p>To get some information on this table run:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  PRAGMA table_info(access);
+</span><span class='line'>  .schema access</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You will see it has the followign columns:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  0|service|TEXT|1||1
+</span><span class='line'>  1|client|TEXT|1||2
+</span><span class='line'>  2|client_type|INTEGER|1||3
+</span><span class='line'>  3|allowed|INTEGER|1||0
+</span><span class='line'>  4|prompt_count|INTEGER|1||0
+</span><span class='line'>  5|csreq|BLOB|0||0
+</span><span class='line'>  6|policy_id|INTEGER|0||0
+</span><span class='line'>  7|indirect_object_identifier_type|INTEGER|0||0
+</span><span class='line'>  8|indirect_object_identifier|TEXT|0||4
+</span><span class='line'>  9|indirect_object_code_identity|BLOB|0||0
+</span><span class='line'>  10|flags|INTEGER|0||0
+</span><span class='line'>  11|last_modified|INTEGER|1|CAST(strftime('%s','now') AS INTEGER)|0</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I then found a row for a service that had the permissions I wanted for Jump Desktop Connect</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  kTCCServiceScreenCapture|com.apple.screensharing.agent|0|0|1||||UNUSED||0|1573525900</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And then a row for Jump Desktop Connect itself:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  kTCCServiceAccessibility|com.p5sys.jump.connect|0|1|1|??|||UNUSED||0|1572360434</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now I have the client string I need and an example row. I duplicated the screensharing service row but switched out the Jump Desktop Connect client string and ran the following in the sqlite3 client:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+</span><span class='line'>  'kTCCServiceScreenCapture','com.p5sys.jump.connect',0,0,1,NULL,NULL,NULL,'UNUSED',NULL,0,1573525900);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then I was able to open System Preferences Security and Privacy settins and enable the Screen Recording permission on the application. It finally was showing the list. I probably could also just run</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+</span><span class='line'>  'kTCCServiceScreenCapture','com.p5sys.jump.connect',0,1,1,NULL,NULL,NULL,'UNUSED',NULL,0,1573525900);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To automatically enable this setting but I did not test this.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2019 - Brad Barrows
+  <!--span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span-->
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
