@@ -31,7 +31,7 @@ How to setup a Wireguard VPN for free!
       PriorityL 380
       Name: Port_51820
       Description: Wireguard
-   ``
+   ```
 
 4. SSH into your VM.
 
