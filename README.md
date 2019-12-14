@@ -1,7 +1,15 @@
 # Brads Blog - Using Octopress
 
-## Octo Notes
+# Octo Notes
 
+### Create a new post
+get into bash then run the command:
+```
+bash
+bundle exec rake new_post["SPPlus"]
+```
+
+### Install notes:
 I installed this theme:
 https://github.com/rastersize/BlogTheme
 
@@ -17,19 +25,22 @@ Then whenever I want to update I run:
 rake generate
 rake preview
 
+bundle exec rake generate
+bundle exec rake preview
+
 
 ```
 
 Or run:
 
 ```
-rake generate && rake preview&; open 'http://localhost:4000/'    
+rake generate && rake preview&; open 'http://127.0.0.1:4000/'
 
 ```
 
 
 
-## Configuration 
+## Configuration
 Configuration for the site is in:
 ```
 bradbarrows.github.io/_config.yml
@@ -44,7 +55,7 @@ For example, modify this file:
 
 
 ## Deploy
-From 
+From
 http://octopress.org/docs/deploying/github/
 
 ```
@@ -66,7 +77,7 @@ and set
 
 
 
-And also set 
+And also set
 ```deploy_dir      = "docs"   # deploy directory (for Github pages deployment)```
 
 in the file
@@ -76,4 +87,4 @@ in the file
 
 Since my setup is all bad using one branch I have to:
 
-rake generate; rake deploy; git pull --rebase origin master; git push origin master 
+rake generate; rake deploy; git pull --rebase origin master; git push origin master

@@ -8,11 +8,11 @@ categories:
 
 I have a laptop which I wanted to be able to check the status of remotely.
 
-For remote access on OSX I use Jump Desktop. On Catalina I ran into an issue where after installing Jump Desktop Connect I was not able to add Jump Desktop Connect to my Security And Privacy settings to enable the Screen Recording permission.
+For remote access on OSX I was using Jump Desktop.I had this same issue with RealVNC and other remote desktop services though.
 
-I was able to manually do this after some grepping.
+Specifically, on Catalina I ran into an issue where after installing Jump Desktop Connect. I was not able to add Jump Desktop Connect to my Security And Privacy settings to enable the Screen Recording permission.
 
-I was able to figure out that a sqlite DB exists that contains all the OSX Catalina Security and Privacy settings.
+After some grepping.I figured out that a sqlite DB exists that contains all the OSX Catalina Security and Privacy settings.
 
 This DB can be opened with:
 ```
