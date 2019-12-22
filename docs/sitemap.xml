@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://bradebarrows.github.io/blog/2019/12/22/summertime/</loc>
+<lastmod>2019-12-22T12:17:55-08:00</lastmod>
+</url>
+<url>
 <loc>http://bradebarrows.github.io/blog/2019/12/14/wireguard/</loc>
 <lastmod>2019-12-14T13:14:19-08:00</lastmod>
 </url>
@@ -20,5 +24,9 @@
 </url>
 <url>
 <loc>http://bradebarrows.github.io/blog/archives/</loc>
+</url>
+<url>
+<loc>http://bradebarrows.github.io/summertime/SummerTimeTab.pdf</loc>
+<lastmod>2019-12-22T12:15:03-08:00</lastmod>
 </url>
 </urlset>

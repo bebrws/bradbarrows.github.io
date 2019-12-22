@@ -4,7 +4,7 @@
   <title><![CDATA[Brad Barrows]]></title>
   <link href="http://bradebarrows.github.io/atom.xml" rel="self"/>
   <link href="http://bradebarrows.github.io/"/>
-  <updated>2019-12-19T09:27:13-08:00</updated>
+  <updated>2019-12-22T12:21:02-08:00</updated>
   <id>http://bradebarrows.github.io/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -12,6 +12,19 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[summertime]]></title>
+    <link href="http://bradebarrows.github.io/blog/2019/12/22/summertime/"/>
+    <updated>2019-12-22T12:17:55-08:00</updated>
+    <id>http://bradebarrows.github.io/blog/2019/12/22/summertime</id>
+    <content type="html"><![CDATA[<p>Trying to learn Summertime on the Cello and wrote out a Tab (missing any time signatures).</p>
+
+<p><a href="http://bradebarrows.github.io/summertime/summertime.mp3">Summertime - Louis Armstrong and Ella Fitzgerald  MP3</a>
+<a href="http://bradebarrows.github.io/summertime/summertimeTab.pdf">Summertime - Louis Armstrong and Ella Fitzgerald Cello Tab PDF</a>
+<a href="http://bradebarrows.github.io/summertime/summertimeTablEdit.tef">Summertime - Louis Armstrong and Ella Fitzgerald Tab file for TabEdit</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Wireguard]]></title>
