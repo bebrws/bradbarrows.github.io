@@ -4,7 +4,7 @@
   <title><![CDATA[Brad Barrows]]></title>
   <link href="http://bradebarrows.github.io/atom.xml" rel="self"/>
   <link href="http://bradebarrows.github.io/"/>
-  <updated>2019-12-22T12:34:22-08:00</updated>
+  <updated>2020-01-17T09:26:22-08:00</updated>
   <id>http://bradebarrows.github.io/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -21,7 +21,6 @@
     <content type="html"><![CDATA[<p>Trying to learn Summertime on the Cello and wrote out a Tab (missing any time signatures).</p>
 
 <ul>
-<li><a href="http://bradebarrows.github.io/summertime/summertime.mp3">Summertime - Louis Armstrong and Ella Fitzgerald  MP3</a></li>
 <li><a href="http://bradebarrows.github.io/summertime/SummerTimeTab.pdf">Summertime - Louis Armstrong and Ella Fitzgerald Cello Tab PDF</a></li>
 <li><a href="http://bradebarrows.github.io/summertime/SummerTimeTablEdit.tef">Summertime - Louis Armstrong and Ella Fitzgerald Tab file for TabEdit</a></li>
 </ul>
@@ -286,7 +285,13 @@ Run this on your VM:</li>
 </span><span class='line'>  .schema access</span></code></pre></td></tr></table></div></figure>
 
 
-<p>You will see it has the followign columns:</p>
+<p>And then checking out the already existing Privacy System Preferences is really helpful to figure out what is going on as well;</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>select * from access;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From the first command ().schema access), you will see it has the followign columns:</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -313,6 +318,8 @@ Run this on your VM:</li>
 </span><span class='line'>  10|flags|INTEGER|0||0
 </span><span class='line'>  11|last_modified|INTEGER|1|CAST(strftime('%s','now') AS INTEGER)|0</span></code></pre></td></tr></table></div></figure>
 
+
+<p>So after figuring out the coumns in this table and with examples from pre existing rows I went about creating my own SQL queries to insert new Privacy options into System Preferences.</p>
 
 <p>I then found a row for a service that had the permissions I wanted for Jump Desktop Connect</p>
 
@@ -343,6 +350,54 @@ Run this on your VM:</li>
 
 
 <p>To automatically enable this setting but I did not test this.</p>
+
+<p>The other day I actually had some trouble screen sharing with Google Chrome as well. To fix this I just needed to figure out the applications &ldquo;client&rdquo; string:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>com.google.Chrome</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>com.google.Chrome.canary</span></code></pre></td></tr></table></div></figure>
+
+
+<p>for Chrome Canary.</p>
+
+<p>This I could create Screen Sharing options in the Privay preferences with:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+</span><span class='line'>  'kTCCServiceScreenCapture','com.google.Chrome',0,0,1,NULL,NULL,NULL,'UNUSED',NULL,0,1573525900);
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+</span><span class='line'>  'kTCCServiceScreenCapture','com.google.Chrome.canary',0,0,1,NULL,NULL,NULL,'UNUSED',NULL,0,1573525900);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And I also created Accessibility options with:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+</span><span class='line'>  'kTCCServiceAccessibility','com.google.Chrome',0,0,1,NULL,NULL,NULL,'UNUSED',NULL,0,1573525900);
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>INSERT INTO access (service,client,client_type,allowed,prompt_count,csreq,policy_id,indirect_object_identifier_type,indirect_object_identifier,indirect_object_code_identity,flags,last_modified) VALUES (
+</span><span class='line'>  'kTCCServiceAccessibility','com.google.Chrome.canary',0,0,1,NULL,NULL,NULL,'UNUSED',NULL,0,1573525900);</span></code></pre></td></tr></table></div></figure>
+
+
+<p>just in case..</p>
 ]]></content>
   </entry>
   

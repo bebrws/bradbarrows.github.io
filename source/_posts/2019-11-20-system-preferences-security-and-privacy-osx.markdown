@@ -78,9 +78,15 @@ To automatically enable this setting but I did not test this.
 
 
 The other day I actually had some trouble screen sharing with Google Chrome as well. To fix this I just needed to figure out the applications "client" string:
-```com.google.Chrome```
+
+```
+com.google.Chrome
+```
 and
-```com.google.Chrome.canary``` for Chrome Canary.
+```
+com.google.Chrome.canary
+```
+for Chrome Canary.
 
 This I could create Screen Sharing options in the Privay preferences with:
 
