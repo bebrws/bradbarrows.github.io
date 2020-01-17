@@ -1,5 +1,5 @@
 bundle exec rake generate
-bundle exec rake preview
+#bundle exec rake preview
 
 cp CNAME public/CNAME
 cp CNAME docs/CNAME
