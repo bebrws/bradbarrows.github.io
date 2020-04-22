@@ -4,7 +4,7 @@
   <title><![CDATA[Brad Barrows]]></title>
   <link href="http://bradebarrows.github.io/atom.xml" rel="self"/>
   <link href="http://bradebarrows.github.io/"/>
-  <updated>2020-01-17T09:26:22-08:00</updated>
+  <updated>2020-04-22T15:09:06-07:00</updated>
   <id>http://bradebarrows.github.io/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -227,32 +227,6 @@ Run this on your VM:</li>
 <p><a href="https://securityespresso.org/tutorials/2019/03/22/vpn-server-using-wireguard-on-ubuntu/">Another Ubuntu based tutorial</a></p>
 
 <p><a href="https://www.linode.com/docs/networking/vpn/set-up-wireguard-vpn-on-ubuntu/">Linode&rsquo;s tutorial which I had trouble with</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[SPPlus]]></title>
-    <link href="http://bradebarrows.github.io/blog/2019/12/13/spplus/"/>
-    <updated>2019-12-13T21:42:58-08:00</updated>
-    <id>http://bradebarrows.github.io/blog/2019/12/13/spplus</id>
-    <content type="html"><![CDATA[<p>A demo video:
-<img src="http://bradebarrows.github.io/images/spplus.gif"></p>
-
-<p>The code is located at
-<a href="https://github.com/bebrws/SPPlusSIMBL">My SPPlusSIMBL project Github page</a></p>
-
-<p>This is a MacForge (used to be MySIMBL) plugin that hooks into Spotlight.</p>
-
-<p>When you type any command starting with &ldquo;bb &rdquo; and ending in &ldquo;;&rdquo; it will execute it in a zsh shell and bring up a transparent window showing the command output. It is basically a transparent terminal window which you can bring up from spotlight and hide through spotlight.</p>
-
-<p>Just type &ldquo;c;&rdquo; to make the terminal window disappear;</p>
-
-<p>Once you bring the transparent terminal window up with some command like:
-<code>bb ls;</code></p>
-
-<p>you can click in the bottom TextView on the bottom of the window and type any command. When the command ends in &ldquo;;&rdquo; it will be executed.</p>
-
-<p>The demo video probably shows this better than I will explain it.</p>
 ]]></content>
   </entry>
   
