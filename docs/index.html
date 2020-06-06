@@ -201,12 +201,12 @@ regPtr = [self getRegPointer:mrm.reg opSize:32];
 
 <p>The nice part about this code is that regardless of the branch of logic we take we end up with 2 pointers rmWritePtr and rmReadPtr. Both of which can be used regardless of whether the MODRM byte decided that this was a register operation or a memory operation. This way the code actually performing the operations doesn&rsquo;t need to check the MODRM byte or worry about this difference. When writing the code for a MODRM operation I can just use</p>
 
-<pre><code>*(uint32_t *)rmWritePtr 
+<pre><code>\*(uint32_t \*)rmWritePtr 
 </code></pre>
 
 <p>whenever I need to set a r/m value and</p>
 
-<pre><code>*(uint32_t *)rmReadPtr 
+<pre><code>\*(uint32_t \*)rmReadPtr 
 </code></pre>
 
 <p>whenever I need to read a r/m value.</p>
@@ -220,7 +220,7 @@ regPtr = [self getRegPointer:mrm.reg opSize:32];
 
 <p>I could get the (dumbed down) result with:</p>
 
-<pre><code>*(uint32_t *)rmWritePtr = (uint32_t)rmReadValue + *(uint32_t *)regPtr
+<pre><code>\*(uint32_t \*)rmWritePtr = (uint32_t)rmReadValue + \*(uint32_t \*)regPtr
 </code></pre>
 
 <p>I thought this lead to very readable opcodes.</p>
@@ -247,7 +247,7 @@ if (mrm.type == modrm_register) {
 regPtr = [self getRegPointer:mrm.reg opSize:8];
 </code></pre>
 
-<p>or just remove the rmReadValue altogether which I had originally and always use <em>(uint32_t </em>)rmReadPtr in place. This is probably correct and I am now pretty sure a previous operation had just resulted in an address being off by a few bytes resulting in this mis alignment and leading to the need for memcpy.</p>
+<p>or just remove the rmReadValue altogether which I had originally and always use *(uint32_t *)rmReadPtr in place. This is probably correct and I am now pretty sure a previous operation had just resulted in an address being off by a few bytes resulting in this mis alignment and leading to the need for memcpy.</p>
 
 <h3>Finishing up</h3>
 

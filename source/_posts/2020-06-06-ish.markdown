@@ -94,11 +94,11 @@ That first block of code is executed after the first opcode byte has been read a
 
 The nice part about this code is that regardless of the branch of logic we take we end up with 2 pointers rmWritePtr and rmReadPtr. Both of which can be used regardless of whether the MODRM byte decided that this was a register operation or a memory operation. This way the code actually performing the operations doesn't need to check the MODRM byte or worry about this difference. When writing the code for a MODRM operation I can just use 
 
-    *(uint32_t *)rmWritePtr 
+    \*(uint32_t \*)rmWritePtr 
 
 whenever I need to set a r/m value and 
 
-    *(uint32_t *)rmReadPtr 
+    \*(uint32_t \*)rmReadPtr 
 
 whenever I need to read a r/m value.
 
@@ -110,7 +110,7 @@ This would be asking me to add the value from the register specified in the opco
 
 I could get the (dumbed down) result with:
 
-    *(uint32_t *)rmWritePtr = (uint32_t)rmReadValue + *(uint32_t *)regPtr
+    \*(uint32_t \*)rmWritePtr = (uint32_t)rmReadValue + \*(uint32_t \*)regPtr
 
 I thought this lead to very readable opcodes.
 
@@ -135,7 +135,7 @@ I added the memcpy in there because I was getting errors about alignment. This m
     
     regPtr = [self getRegPointer:mrm.reg opSize:8];
 
-or just remove the rmReadValue altogether which I had originally and always use *(uint32_t *)rmReadPtr in place. This is probably correct and I am now pretty sure a previous operation had just resulted in an address being off by a few bytes resulting in this mis alignment and leading to the need for memcpy.
+or just remove the rmReadValue altogether which I had originally and always use \*(uint32_t \*)rmReadPtr in place. This is probably correct and I am now pretty sure a previous operation had just resulted in an address being off by a few bytes resulting in this mis alignment and leading to the need for memcpy.
 
 ### Finishing up
 
