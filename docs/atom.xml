@@ -4,7 +4,7 @@
   <title><![CDATA[Brad Barrows]]></title>
   <link href="http://bradebarrows.github.io/atom.xml" rel="self"/>
   <link href="http://bradebarrows.github.io/"/>
-  <updated>2020-06-06T11:25:53-07:00</updated>
+  <updated>2020-06-06T11:33:05-07:00</updated>
   <id>http://bradebarrows.github.io/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -80,20 +80,20 @@
 
 <pre><code>[self readByteIncIP:&amp;modRMByte];
 mrm = [self decodeModRMByte:modRMByte];
-regPtr = [self getRegPointer:mrm.reg opSize:8];
+regPtr = [self getRegPointer:mrm.reg opSize:32];
 if (mrm.type == modrm_register) {
-    rmWritePtr = rmReadPtr = [self getRegPointer:mrm.base opSize:8];
-    memcpy(&amp;rmReadValue, rmReadPtr, sizeof(uint8_t));
+    rmWritePtr = rmReadPtr = [self getRegPointer:mrm.base opSize:32];
+    memcpy(&amp;rmReadValue, rmReadPtr, sizeof(uint32_t));
 } else {
-    addr = [self getModRMAddress:mrm opSize:8];
+    addr = [self getModRMAddress:mrm opSize:32];
     if (!(rmReadPtr = [self.task.mem getPointer:addr type:MEM_READ])) {
         return 13;
     }
-    memcpy(&amp;rmReadValue, rmReadPtr, sizeof(uint16_t));
+    memcpy(&amp;rmReadValue, rmReadPtr, sizeof(uint32_t));
     rmWritePtr = [self.task.mem getPointer:addr type:MEM_WRITE];
 }
 
-regPtr = [self getRegPointer:mrm.reg opSize:8];
+regPtr = [self getRegPointer:mrm.reg opSize:32];
 </code></pre>
 
 <p>and:</p>
@@ -134,6 +134,28 @@ regPtr = [self getRegPointer:mrm.reg opSize:8];
 <p>I thought this lead to very readable opcodes.</p>
 
 <p>And I showed above how easy it is to read a few bytes from eip to grab an immediate already.</p>
+
+<p>I added the memcpy in there because I was getting errors about alignment. This meant that the modrm addresses were resulting in pointers whose addresses were not 4 byte aligned (divisible evenly by 4) for uint32_t&rsquo;s for example. However, now that I think about it, that may and most likely was a bug so hopefuly I can remove that ugly code and get it back to:</p>
+
+<pre><code>[self readByteIncIP:&amp;modRMByte];
+mrm = [self decodeModRMByte:modRMByte];
+regPtr = [self getRegPointer:mrm.reg opSize:32];
+if (mrm.type == modrm_register) {
+    rmWritePtr = rmReadPtr = [self getRegPointer:mrm.base opSize:32];
+    rmReadValue = *(uint32_t *)rmReadPtr;
+} else {
+    addr = [self getModRMAddress:mrm opSize:32];
+    if (!(rmReadPtr = [self.task.mem getPointer:addr type:MEM_READ])) {
+        return 13;
+    }
+    rmReadValue = *(uint32_t *)rmReadPtr;
+    rmWritePtr = [self.task.mem getPointer:addr type:MEM_WRITE];
+}
+
+regPtr = [self getRegPointer:mrm.reg opSize:8];
+</code></pre>
+
+<p>or just remove the rmReadValue altogether which I had originally and always use <em>(uint32_t </em>)rmReadPtr in place. This is probably correct and I am now pretty sure a previous operation had just resulted in an address being off by a few bytes resulting in this mis alignment and leading to the need for memcpy.</p>
 
 <h3>Finishing up</h3>
 
