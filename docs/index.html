@@ -124,9 +124,9 @@
 
 <p>Ish met these standards. It is also easy to debug and instrument which was helpful.</p>
 
-<p>At some point I realized that Ish is way more than just an emulator. It, in my humble opinion, is really almost like an entire x86 user mode emulator and an entire Linux Kernel (running on top of the iOS API) all in one (kind of crossing off 2 items from the list of things I was interested in). It is really amazing that the vast majority of this was written by one person.</p>
+<p>At some point I realized that Ish is way more than just an emulator. It, in my humble opinion, is really almost like an entire x86 user mode emulator and an entire Linux kernel (running on top of the iOS API) all in one (kind of crossing off 2 items from the list of things I was interested in). It is really amazing that the vast majority of this was written by one person.</p>
 
-<p>Reading though Ish and looking for a place to start.. learning.. doing anything from was tough at first. I realized that the Jit was just beyond me at this point (although I got the basic concepts, I wouldn&rsquo;t be able to write my own from what I read). I found that an interpreted version of Ish was still included in the code that didn&rsquo;t seemed to be in use any more and decided I would try to write my own interpreted Ish from this.</p>
+<p>Reading though Ish and looking for a place to start.. learning.. doing anything was tough at first. I realized that the JIT was just beyond me at this point (although I got the basic concepts, I wouldn&rsquo;t be able to write my own from what I read). I found that an interpreted version of Ish was still included in the code that didn&rsquo;t seemed to be in use any more and decided I would try to write my own interpreted Ish from this.</p>
 
 <p>I set out with a few goals. Try to document with easily readable code/data structures and use few macros.</p>
 
@@ -136,11 +136,11 @@
 
 <h3>Interesting stuff?</h3>
 
-<p>Well studying everything I read as I went along I learned that the TLB (Translation Lookaside Buffer) is actually unnecessary. I wonder if Ish could remove it as well?? Unless maybe there is some security reason I am missing to keep an emulated TLB in place?</p>
+<p>Well studying everything I read as I went along I learned that the TLB (Translation Lookaside Buffer) is actually unnecessary. I wonder if Ish could remove it as well? Unless maybe there is some security reason I am missing to keep an emulated TLB in place?</p>
 
 <p>I can understand why a hardware TLB would be an improvement. A small cache for commonly used addresses makes since versus &ldquo;walking the page tables&rdquo; for every address.</p>
 
-<p>I also decided to ditch the classic page table hiearchy of multi layered page directories and page tables to just use a simple 1D array. And it works! I thought this would be great in this case because it also showed how simple the whole page table architecture really can be. Or maybe the real point of it. It simply is a way to let humans break up memory in constantly sized chunks and quickly retrieve the location (and attributes) of that memory chunk for any given address.</p>
+<p>I also decided to ditch the classic page table hiearchy of multi layered page directories and page tables to just use a simple array. And it works! I thought this would be great in this case because it also showed how simple the whole page table architecture really can be. Or maybe the real point of it. It simply is a way to let humans break up memory in constantly sized chunks and quickly retrieve the location (and attributes) of that memory chunk for any given address.</p>
 
 <p>At first I thought that the Page Directories and Page Tables served some greater purpose. Maybe there were important attributes related to memory protection or something that was housed in these structures? But I realized all the different page table implementations all really are trying to accomplish the same thing. Find the same page page table entry for any address.</p>
 
@@ -154,13 +154,13 @@
 <pre><code>uint32_t page = addr &amp; 0xFFFFFFFFFFFFF000; 
 </code></pre>
 
-<p>Using a 1D page table is simple and easy.. my address lookup times are also fast. To lookup a page I just cut off the first 12 bits and index into my PageTableEntry array to find the correct page table entry. And again, no need to hassle with state of the TLB which is nice and saves some time (and I would love to find out if it was much of a speed improvement).</p>
+<p>Using a page table is simple and easy.. my address lookup times are also fast. To lookup a page I just cut off the first 12 bits and index into my PageTableEntry array to find the correct page table entry. And again, no need to hassle with state of the TLB which is nice and saves some time (and I would love to find out if it was much of a speed improvement).</p>
 
 <p>This is all pretty simple stuff but it felt good realizing that these data structures were not as complicated as I had once assumed them to be.</p>
 
 <h3>Readability</h3>
 
-<p>There is really only a handful of opcodes I broke down and used Macros for. And that could be helpful for learning macros for someone anyway if they were having a hard time finding a project they could read through easily.</p>
+<p>There is really only a handful of opcodes I broke down and used macros for. And that could be helpful for learning macros for someone anyway if they were having a hard time finding a project they could read through easily.</p>
 
 <p>I have also messed with Ish enough that I was able to output a few JSON files with the CPU state for each process for every instruction/tick. (I might just push up a branch with the build of Ish I have been using to debug this project with at some point).</p>
 
@@ -195,7 +195,7 @@ regPtr = [self getRegPointer:mrm.reg opSize:32];
 
 <p>I thought this turned out be fairly readable, even with the hacks I had to add in to make this block re usable in all situations (the hack I am referring to is the use of memcpy which I will explain).</p>
 
-<p>Many op codes operate on either a register, whatever the &ldquo;MODRM&rdquo; byte says to operate on and/or an immediate value.</p>
+<p>Many op codes operate on some combination of a register, whatever the &ldquo;MODRM&rdquo; byte says to operate on, or an immediate value.</p>
 
 <p>That first block of code is executed after the first opcode byte has been read and we have figured out which opcode we are parsing bytes for. Then that code above starts out by reading in the MODRM byte. This byte will say whether or not it will be effecting an address or a register. This is why there is an if statement there.</p>
 
@@ -204,12 +204,12 @@ regPtr = [self getRegPointer:mrm.reg opSize:32];
 <pre><code>\*(uint32_t \*)rmWritePtr 
 </code></pre>
 
-<p>whenever I need to set a r/m value and</p>
+<p>whenever I need to set a r/m (MODRM) value and</p>
 
 <pre><code>\*(uint32_t \*)rmReadPtr 
 </code></pre>
 
-<p>whenever I need to read a r/m value.</p>
+<p>whenever I need to read a r/m (MODRM) value.</p>
 
 <p>For example if I had an operation like:</p>
 
@@ -223,11 +223,11 @@ regPtr = [self getRegPointer:mrm.reg opSize:32];
 <pre><code>\*(uint32_t \*)rmWritePtr = (uint32_t)rmReadValue + \*(uint32_t \*)regPtr
 </code></pre>
 
-<p>I thought this lead to very readable opcodes.</p>
+<p>I thought this would lead to very readable opcodes.</p>
 
 <p>And I showed above how easy it is to read a few bytes from eip to grab an immediate already.</p>
 
-<p>I added the memcpy in there because I was getting errors about alignment. This meant that the modrm addresses were resulting in pointers whose addresses were not 4 byte aligned (divisible evenly by 4) for uint32_t&rsquo;s for example. However, now that I think about it, that may and most likely was a bug so hopefuly I can remove that ugly code and get it back to:</p>
+<p>I added the memcpy in there because I was getting errors about alignment. This meant that the MODRM addresses were resulting in pointers whose addresses were not 4 byte aligned (divisible evenly by 4) for uint32_t&rsquo;s for example. However, now that I think about it, that may and most likely was a bug so hopefully I can remove that ugly code and get it back to:</p>
 
 <pre><code>[self readByteIncIP:&amp;modRMByte];
 mrm = [self decodeModRMByte:modRMByte];
@@ -247,15 +247,20 @@ if (mrm.type == modrm_register) {
 regPtr = [self getRegPointer:mrm.reg opSize:8];
 </code></pre>
 
-<p>or just remove the rmReadValue altogether which I had originally and always use *(uint32_t *)rmReadPtr in place. This is probably correct and I am now pretty sure a previous operation had just resulted in an address being off by a few bytes resulting in this mis alignment and leading to the need for memcpy.</p>
+<p>or just remove the rmReadValue altogether which I had originally and always use *(uint32_t *)rmReadPtr in place of needing the line/s:</p>
+
+<pre><code>rmReadValue = *(uint32_t *)rmReadPtr;
+</code></pre>
+
+<p>This is probably correct and I am now pretty sure a previous operation had just resulted in an address being off by a few bytes resulting in this mis alignment and leading to the need for memcpy.</p>
 
 <h3>Finishing up</h3>
 
-<p>I am trying not to give up now that I am relatively close to getting a terminal up.. I am close only if I try and just hurry through the syscall/Linux kernel aspects of Ish. (I really want to play around with some different virtual memory ideas and to see if removing things like the TLB helps much). For that reason the syscalls may just end up copied over from Ish directly for now but I hope I have time later to learn more about how they work.</p>
+<p>The goal would be to get a terminal up if time allows. I would prefer not to hurry through the syscall/Linux kernel aspects of Ish. (I really want to play around with some different virtual memory ideas and to see if removing things like the TLB helps much). For that reason the syscalls may just end up copied over from Ish directly for now but I hope I have time later to learn more about how they work.</p>
 
-<p>In summary the x86 emulation part is done up until the point where all opcodes needed to get to the first syscall execute correctly and are verified by comparing against the state of Ish. However I am sure there are still bugs in there, especially in the 16 bit version of the opcodes. These have had very little coverage.</p>
+<p>The x86 emulation part is running up until the point where the first syscall is executed. This was verified by comparing against the state of Ish. However I am sure there are still bugs in there, especially in the 16 bit version of the opcodes. These have had very little coverage.</p>
 
-<p>The majority of the rest of the work to getting a terminal up (when I will be happy with this) probably lays in finishing off all the syscalls.</p>
+<p>The majority of the rest of the work to getting a terminal up (when I would be happy with this) probably lays in finishing off all the syscalls.</p>
 
 <h3>Thanks Ish</h3>
 
