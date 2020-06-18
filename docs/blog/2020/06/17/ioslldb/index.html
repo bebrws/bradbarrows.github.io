@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Build your own Arm64 iOS LLDB binary - Brad Barrows</title>
+  <meta name="author" content="Brad Barrows">
+
+  
+  <meta name="description" content="Buildling an ARM64 LLDB binary for iOS off the latest llvm-project commits Struggling with building lldb for iOS using the latest llvm from the llvm- &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://bradebarrows.github.io/blog/2020/06/17/ioslldb">
+  <link href="/favicon.ico" rel="icon">
+  
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Brad Barrows" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous" />
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-154810525-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-154810525-1');
+</script>
+
+  
+
+</head>
+
+<body   class="no-sidebar"  >
+  <header role="banner"><hgroup>
+  <h1>Brad Barrows</h1>
+  
+    <h2><a href="/">Thoughts and Notes</a></h2>
+  
+</hgroup>
+
+</header>
+
+  <div id='links'>
+    <ul>
+      <li><a href="https://github.com/bebrws/"><i class="fab fa-github fa-2x"></i></a></li>
+      <!--li><a href="https://www.linkedin.com/in/bbarrows/"><i class="fab fa-linkedin fa-2x"></i></a></li-->
+    </ul>
+  </div>
+
+  <nav role="navigation">
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:bradebarrows.github.io" />
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Build Your Own Arm64 iOS LLDB Binary</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2020-06-17T18:04:05-07:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Buildling an ARM64 LLDB binary for iOS off the latest llvm-project commits</h2>
+
+<p>Struggling with building lldb for iOS using the latest llvm from the llvm-project repository? Then checkout the <a href="https://github.com/bebrws/iosLLVMLLDBBuildStruggle">ninja build</a> script I worked over for way too long to get your own build going now!</p>
+
+<p>Well I was too. I am positive I must have missed something with CMake to select the right Platform but I ended up just making modifications to the generated ninja build.ninja file until I got lldb to build</p>
+
+<p>I thought I would just share it in case anyone else want a quick and dirty way to build lldb themselves for iOS.</p>
+
+<p>I am also sharing the CMake files the should be enough to generate a build dir that will build all the other important binaries and libs.</p>
+
+<p>I would just follow my CMake build with the files included here and then copy over the build.ninja file and run a good:</p>
+
+<pre><code>ninja -v lldb
+</code></pre>
+
+<p>to get that built!</p>
+
+<p>Hope somebody finds this helpful</p>
+
+<h2>CMake ideas</h2>
+
+<p>Checkout the CMake GUI!!</p>
+
+<p>It is crazy helpful. The tooltip descriptions for what a varivarable does will save you so much time..</p>
+
+<p>Working through different options related to cross copmiling is also much much easier to follow with the GUI. I would recommend it.</p>
+
+<p><a href="https://cmake.org/download/">CMake GUI Download</a></p>
+
+<p>NOTE: That in some cases where you want to change something like the C_FLAGS or the C COMPILER (CMAKE_C_COMPILER I believe) you will need to check the Advanced checkbox.</p>
+
+<p>Then on OSX I have a function in my ~/.zshrc to help me quickly load up a CMake GUI for any build dir that you might find helpful:</p>
+
+<pre><code>    function cmakeGUIDir() {
+        nohup /Applications/CMake.app/Contents/MacOS/CMake "$@" &amp;
+    }
+</code></pre>
+
+<p>Then say your in the llvm-project repository folder. Let&rsquo;s say you want to create a new ios build folder. You can run a quick:</p>
+
+<pre><code>    mkdir -p ios
+    cmakeGUIDir ios
+</code></pre>
+
+<p>To get up and running with the CMake gui, pointed to the right locations (you probably will need to alter the llvm-project source directory actually but it should be close!)</p>
+
+<p>If you want to just use my CMake configuration that I labored over for a while I think you could create just a dummy CMake build directory like I did above. Configure for Ninja. Run generate. Then copy over all the files from the <a href="https://github.com/bebrws/iosLLVMLLDBBuildStruggle">repo here</a> and goto the menu options</p>
+
+<pre><code>    File -&gt; Reload Cache 
+</code></pre>
+
+<p>The important file should be</p>
+
+<pre><code>    CMakeCache.txt
+</code></pre>
+
+<p>However I am pretty sure you will run into some issues with the directories. At least with the llvm-project directory and the ios build directory you are targeting here. You might need to search through and replace these directories:</p>
+
+<pre><code>    /Users/bbarrows/repos/llvm-project/ios
+    /Users/bbarrows/repos/llvm-project
+</code></pre>
+
+<p>Hint: This might be important:</p>
+
+<pre><code>    CMAKE_CACHEFILE_DIR:INTERNAL=/Users/bbarrows/repos/llvm-project/ios
+</code></pre>
+
+<p>This is supposed the full path to the CMakeCache.txt file itself so having it be incorrect will probably lead to CMake freaking out. I would deff. start off by changing that one. Really I am hoping someone can get away with just applying the git diff I am about to mention and by using the ninja build script.</p>
+
+<h2>That should work.. right?</h2>
+
+<p>Actually it won&rsquo;t.. There is even more I had to work through to get this built the wrong way. But hey, to get this right it&rsquo;s either your time and effort making your way through the CMake/llvm-project docuumentation (which is actually great if I am being honest) with the sweat on your brow and the taste of blood in your mouth from hours of frustrating documentation pondering followed by modification/build script generation/compilation repitiions or your just going to go along with this.. Maybe working through the puzzle of this broken ninja build is the smartest way.. maybe the wrong way is the right way. I guess my belief is who cares if it gets the job done and it doesn&rsquo;t eat up any more time. And this should deffinately end when I have gotten to the point where solving these error messages no longer seems to be teaching me anything.</p>
+
+<p>Continuuing on..</p>
+
+<p>Let&rsquo;s apply the diff and then you should be able to build.</p>
+
+<p>To apply the diff you will need to:</p>
+
+<pre><code>git apply llvm-project-modifications.diff
+</code></pre>
+
+<p>Then try to build with a:</p>
+
+<pre><code>    ninja -v lldb
+</code></pre>
+
+<p>Good luck, maybe leave me an angry Github Issue or something if you run into Issues. I would just be some combination of happy and surprised if anyone reads this anyway.</p>
+
+<h2>No BS, how to:</h2>
+
+<p>Apply the diff in your llvm-project repository:</p>
+
+<pre><code>    cp llvm-project-modifications.diff ~/repos/llvm-project/          # This is assuming that you have a folder ~/repos/ where you keep all your repositories tucked away
+    cd  ~/repos/llvm-project/   
+git apply llvm-project-modifications.diff
+</code></pre>
+
+<p>Use my CMake function above to create a dummy iOS build directory:</p>
+
+<pre><code>    mkdir -p ~/repos/llvm-project/ios/
+    cmakeGUIDir ~/repos/llvm-project/ios/  
+</code></pre>
+
+<p>The copy over the build.ninja file from the folder LLVM11iOSBuildDirectory</p>
+
+<pre><code>    cp LLVM11iOSBuildDirectory/build.ninja ~/repos/llvm-project/ios/
+</code></pre>
+
+<p>Then try to build with a:</p>
+
+<pre><code>    cd  ~/repos/llvm-project/ios
+    ninja -v lldb
+</code></pre>
+
+<p>With good luck that just might work. You can always try to use the CMakeCache.txt file.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn"><a href="/" title="About the author (Brad Barrows)" rel="author">Brad Barrows</a></span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2020-06-17T18:04:05-07:00" pubdate data-updated="true"></time>
+      
+
+
+    </p>
+    
+      <!-- div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://bradebarrows.github.io/blog/2020/06/17/ioslldb/" data-via="" data-counturl="http://bradebarrows.github.io/blog/2020/06/17/ioslldb/" >Tweet</a>
+  
+  
+  
+</div-->
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2020/06/06/ish/" title="Previous Post: Ish">&laquo; Ish</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2020 - Brad Barrows
+  <!--span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span-->
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
