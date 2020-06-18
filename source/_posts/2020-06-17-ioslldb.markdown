@@ -6,6 +6,16 @@ comments: true
 categories: 
 ---
 
+## NOTE: This is actually not fully working.
+
+Running into this error when running on iOS currently
+
+        : CommandLine Error: Option 'debug-buffer-size' registered more than once!
+        LLVM ERROR: inconsistency in registered CommandLine options
+        [1]    14671 abort      ./lldb
+
+Will look into this more though.
+
 ## Buildling an ARM64 LLDB binary for iOS off the latest llvm-project commits
 
 Struggling with building lldb for iOS using the latest llvm from the llvm-project repository? Then checkout the [ninja build](https://github.com/bebrws/iosLLVMLLDBBuildStruggle) script I worked over for way too long to get your own build going now!

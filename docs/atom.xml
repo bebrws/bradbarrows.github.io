@@ -4,7 +4,7 @@
   <title><![CDATA[Brad Barrows]]></title>
   <link href="http://bradebarrows.github.io/atom.xml" rel="self"/>
   <link href="http://bradebarrows.github.io/"/>
-  <updated>2020-06-18T10:50:55-07:00</updated>
+  <updated>2020-06-18T10:52:29-07:00</updated>
   <id>http://bradebarrows.github.io/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -18,7 +18,18 @@
     <link href="http://bradebarrows.github.io/blog/2020/06/17/ioslldb/"/>
     <updated>2020-06-17T18:04:05-07:00</updated>
     <id>http://bradebarrows.github.io/blog/2020/06/17/ioslldb</id>
-    <content type="html"><![CDATA[<h2>Buildling an ARM64 LLDB binary for iOS off the latest llvm-project commits</h2>
+    <content type="html"><![CDATA[<h2>NOTE: This is actually not fully working.</h2>
+
+<p>Running into this error when running on iOS currently</p>
+
+<pre><code>    : CommandLine Error: Option 'debug-buffer-size' registered more than once!
+    LLVM ERROR: inconsistency in registered CommandLine options
+    [1]    14671 abort      ./lldb
+</code></pre>
+
+<p>Will look into this more though.</p>
+
+<h2>Buildling an ARM64 LLDB binary for iOS off the latest llvm-project commits</h2>
 
 <p>Struggling with building lldb for iOS using the latest llvm from the llvm-project repository? Then checkout the <a href="https://github.com/bebrws/iosLLVMLLDBBuildStruggle">ninja build</a> script I worked over for way too long to get your own build going now!</p>
 
