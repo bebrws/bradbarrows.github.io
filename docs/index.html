@@ -9,7 +9,7 @@
   <meta name="author" content="Brad Barrows">
 
   
-  <meta name="description" content="Studying Ish and x86UserModeEmu The summary I have always been interested in Operating Systems, Compilers, Languages, Linux, Emulators, etc etc.. But &hellip;">
+  <meta name="description" content="Buildling an ARM64 LLDB binary for iOS off the latest llvm-project commits Struggling with building lldb for iOS using the latest llvm from the llvm- &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -81,6 +81,93 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2020/06/17/ioslldb/">Build Your Own Arm64 iOS LLDB Binary</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2020-06-17T18:04:05-07:00" pubdate data-updated="true"></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Buildling an ARM64 LLDB binary for iOS off the latest llvm-project commits</h2>
+
+<p>Struggling with building lldb for iOS using the latest llvm from the llvm-project repository? Then checkout the <a href="https://github.com/bebrws/iosLLVMLLDBBuildStruggle">ninja build</a> script I worked over for way too long to get your own build going now!</p>
+
+<p>Well I was too. I am positive I must have missed something with CMake to select the right Platform but I ended up just making modifications to the generated ninja build.ninja file until I got lldb to build</p>
+
+<p>I thought I would just share it in case anyone else want a quick and dirty way to build lldb themselves for iOS.</p>
+
+<p>I am also sharing the CMake files the should be enough to generate a build dir that will build all the other important binaries and libs.</p>
+
+<p>I would just follow my CMake build with the files included here and then copy over the build.ninja file and run a good:</p>
+
+<pre><code>ninja -v lldb
+</code></pre>
+
+<p>to get that built!</p>
+
+<p>Hope somebody finds this helpful</p>
+
+<h2>CMake tips</h2>
+
+<p>Checkout the CMake GUI!!</p>
+
+<p>It is crazy helpful. The tooltip descriptions for what a paramter does will save you so much time..</p>
+
+<p>Working through different options related to cross copmiling is also much much easier to follow with the GUI. I would recommend it.</p>
+
+<p><a href="https://cmake.org/download/">CMake GUI Download</a></p>
+
+<p>NOTE: That in some cases where you want to change something like the C_FLAGS or the C COMPILER (CMAKE_C_COMPILER I believe) you will need to check the Advanced checkbox.</p>
+
+<p>Then on OSX I have a function in my ~/.zshrc to help me quickly load up a CMake GUI for any build dir that you might find helpful:</p>
+
+<pre><code>    function cmakeGUIDir() {
+        nohup /Applications/CMake.app/Contents/MacOS/CMake "$@" &amp;
+    }
+</code></pre>
+
+<p>Then say your in the llvm-project repository folder. Let&rsquo;s say you want to create a new ios build folder. You can run a quick:</p>
+
+<pre><code>    mkdir -p ios
+    cmakeGUIDir ios
+</code></pre>
+
+<p>To get up and running with the CMake gui, pointed to the right locations (you probably will need to alter the llvm-project source directory actually but it should be close!)</p>
+
+<p>If you want to just use my CMake configuration that I labored over for a while I think you could create just a dummy CMake build directory like I did above. Configure for Ninja. Run generate. Then copy over all the files from the <a href="https://github.com/bebrws/iosLLVMLLDBBuildStruggle">repo here</a> and goto the menu options</p>
+
+<pre><code>    File -&gt; Reload Cache 
+</code></pre>
+
+<p>That should? work?</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
