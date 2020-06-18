@@ -4,7 +4,7 @@
   <title><![CDATA[Brad Barrows]]></title>
   <link href="http://bradebarrows.github.io/atom.xml" rel="self"/>
   <link href="http://bradebarrows.github.io/"/>
-  <updated>2020-06-17T18:14:40-07:00</updated>
+  <updated>2020-06-17T22:48:37-07:00</updated>
   <id>http://bradebarrows.github.io/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -37,11 +37,11 @@
 
 <p>Hope somebody finds this helpful</p>
 
-<h2>CMake tips</h2>
+<h2>CMake ideas</h2>
 
 <p>Checkout the CMake GUI!!</p>
 
-<p>It is crazy helpful. The tooltip descriptions for what a paramter does will save you so much time..</p>
+<p>It is crazy helpful. The tooltip descriptions for what a varivarable does will save you so much time..</p>
 
 <p>Working through different options related to cross copmiling is also much much easier to follow with the GUI. I would recommend it.</p>
 
@@ -69,7 +69,71 @@
 <pre><code>    File -&gt; Reload Cache 
 </code></pre>
 
-<p>That should? work?</p>
+<p>The important file should be</p>
+
+<pre><code>    CMakeCache.txt
+</code></pre>
+
+<p>However I am pretty sure you will run into some issues with the directories. At least with the llvm-project directory and the ios build directory you are targeting here. You might need to search through and replace these directories:</p>
+
+<pre><code>    /Users/bbarrows/repos/llvm-project/ios
+    /Users/bbarrows/repos/llvm-project
+</code></pre>
+
+<p>Hint: This might be important:</p>
+
+<pre><code>    CMAKE_CACHEFILE_DIR:INTERNAL=/Users/bbarrows/repos/llvm-project/ios
+</code></pre>
+
+<p>This is supposed the full path to the CMakeCache.txt file itself so having it be incorrect will probably lead to CMake freaking out. I would deff. start off by changing that one. Really I am hoping someone can get away with just applying the git diff I am about to mention and by using the ninja build script.</p>
+
+<h2>That should work.. right?</h2>
+
+<p>Actually it won&rsquo;t.. There is even more I had to work through to get this built the wrong way. But hey, to get this right it&rsquo;s either your time and effort making your way through the CMake/llvm-project docuumentation (which is actually great if I am being honest) with the sweat on your brow and the taste of blood in your mouth from hours of frustrating documentation pondering followed by modification/build script generation/compilation repitiions or your just going to go along with this.. Maybe working through the puzzle of this broken ninja build is the smartest way.. maybe the wrong way is the right way. I guess my belief is who cares if it gets the job done and it doesn&rsquo;t eat up any more time. And this should deffinately end when I have gotten to the point where solving these error messages no longer seems to be teaching me anything.</p>
+
+<p>Continuuing on..</p>
+
+<p>Let&rsquo;s apply the diff and then you should be able to build.</p>
+
+<p>To apply the diff you will need to:</p>
+
+<pre><code>git apply llvm-project-modifications.diff
+</code></pre>
+
+<p>Then try to build with a:</p>
+
+<pre><code>    ninja -v lldb
+</code></pre>
+
+<p>Good luck, maybe leave me an angry Github Issue or something if you run into Issues. I would just be some combination of happy and surprised if anyone reads this anyway.</p>
+
+<h2>No BS, how to:</h2>
+
+<p>Apply the diff in your llvm-project repository:</p>
+
+<pre><code>    cp llvm-project-modifications.diff ~/repos/llvm-project/          # This is assuming that you have a folder ~/repos/ where you keep all your repositories tucked away
+    cd  ~/repos/llvm-project/   
+git apply llvm-project-modifications.diff
+</code></pre>
+
+<p>Use my CMake function above to create a dummy iOS build directory:</p>
+
+<pre><code>    mkdir -p ~/repos/llvm-project/ios/
+    cmakeGUIDir ~/repos/llvm-project/ios/  
+</code></pre>
+
+<p>The copy over the build.ninja file from the folder LLVM11iOSBuildDirectory</p>
+
+<pre><code>    cp LLVM11iOSBuildDirectory/build.ninja ~/repos/llvm-project/ios/
+</code></pre>
+
+<p>Then try to build with a:</p>
+
+<pre><code>    cd  ~/repos/llvm-project/ios
+    ninja -v lldb
+</code></pre>
+
+<p>With good luck that just might work. You can always try to use the CMakeCache.txt file.</p>
 ]]></content>
   </entry>
   
