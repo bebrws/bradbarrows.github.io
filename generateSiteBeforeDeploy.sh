@@ -1,5 +1,11 @@
+# Could require:
+# bundle exec rake generate
+
 bundle exec jekyll build
-bundle exec jekyll build -d public/
 
 cp CNAME docs/CNAME
-cp CNAME public/CNAME
+
+
+git add docs
+git add source
+
