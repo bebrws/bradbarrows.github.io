@@ -4,7 +4,7 @@
   <title><![CDATA[Brad Barrows]]></title>
   <link href="http://bradebarrows.github.io/atom.xml" rel="self"/>
   <link href="http://bradebarrows.github.io/"/>
-  <updated>2020-06-18T10:52:29-07:00</updated>
+  <updated>2020-06-19T00:50:10-07:00</updated>
   <id>http://bradebarrows.github.io/</id>
   <author>
     <name><![CDATA[Brad Barrows]]></name>
@@ -18,7 +18,7 @@
     <link href="http://bradebarrows.github.io/blog/2020/06/17/ioslldb/"/>
     <updated>2020-06-17T18:04:05-07:00</updated>
     <id>http://bradebarrows.github.io/blog/2020/06/17/ioslldb</id>
-    <content type="html"><![CDATA[<h2>NOTE: This is actually not fully working.</h2>
+    <content type="html"><![CDATA[<h2>NOTE: This is actually not fully working..</h2>
 
 <p>Running into this error when running on iOS currently</p>
 
@@ -122,9 +122,11 @@
 
 <p>Apply the diff in your llvm-project repository:</p>
 
-<pre><code>    cp llvm-project-modifications.diff ~/repos/llvm-project/          # This is assuming that you have a folder ~/repos/ where you keep all your repositories tucked away
+<pre><code>    cp llvm-project-modifications.diff ~/repos/llvm-project/          
+    # Above: This is assuming that you have a folder ~/repos/ where you keep all your repositories tucked away
+
     cd  ~/repos/llvm-project/   
-git apply llvm-project-modifications.diff
+    git apply llvm-project-modifications.diff
 </code></pre>
 
 <p>Use my CMake function above to create a dummy iOS build directory:</p>

@@ -9,7 +9,7 @@
   <meta name="author" content="Brad Barrows">
 
   
-  <meta name="description" content="NOTE: This is actually not fully working. Running into this error when running on iOS currently : CommandLine Error: Option 'debug-buffer-size' &hellip;">
+  <meta name="description" content="NOTE: This is actually not fully working.. Running into this error when running on iOS currently : CommandLine Error: Option 'debug-buffer-size' &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -107,7 +107,7 @@
   </header>
 
 
-<div class="entry-content"><h2>NOTE: This is actually not fully working.</h2>
+<div class="entry-content"><h2>NOTE: This is actually not fully working..</h2>
 
 <p>Running into this error when running on iOS currently</p>
 
@@ -211,9 +211,11 @@
 
 <p>Apply the diff in your llvm-project repository:</p>
 
-<pre><code>    cp llvm-project-modifications.diff ~/repos/llvm-project/          # This is assuming that you have a folder ~/repos/ where you keep all your repositories tucked away
+<pre><code>    cp llvm-project-modifications.diff ~/repos/llvm-project/          
+    # Above: This is assuming that you have a folder ~/repos/ where you keep all your repositories tucked away
+
     cd  ~/repos/llvm-project/   
-git apply llvm-project-modifications.diff
+    git apply llvm-project-modifications.diff
 </code></pre>
 
 <p>Use my CMake function above to create a dummy iOS build directory:</p>
@@ -285,13 +287,15 @@ git apply llvm-project-modifications.diff
 
     </div>
   </div>
-  <footer role="contentinfo"><p>
+  
+  <footer id="footer" role="contentinfo"><p>
   Copyright &copy; 2020 - Brad Barrows
+</p>  
   <img src="/images/SmallSurfEdited800WidthCrop.png"
      alt="Markdown Monster icon"
-     style="width: 640px;" />
+     style="width: 1000px;" />
   <!--span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span-->
-</p>
+
 
 </footer>
   

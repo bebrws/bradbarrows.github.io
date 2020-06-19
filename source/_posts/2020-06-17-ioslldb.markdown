@@ -6,7 +6,8 @@ comments: true
 categories: 
 ---
 
-## NOTE: This is actually not fully working.
+
+## NOTE: This is actually not fully working..
 
 Running into this error when running on iOS currently
 
@@ -109,9 +110,12 @@ Good luck, maybe leave me an angry Github Issue or something if you run into Iss
 
 Apply the diff in your llvm-project repository:
 
-        cp llvm-project-modifications.diff ~/repos/llvm-project/          # This is assuming that you have a folder ~/repos/ where you keep all your repositories tucked away
+        cp llvm-project-modifications.diff ~/repos/llvm-project/          
+        # Above: This is assuming that you have a folder ~/repos/ where you keep all your repositories tucked away
+
         cd  ~/repos/llvm-project/   
-	git apply llvm-project-modifications.diff
+        git apply llvm-project-modifications.diff
+
 
 
 Use my CMake function above to create a dummy iOS build directory:
