@@ -23,23 +23,24 @@
   
 
   <script>
+  // Expand code tabs when u tap em on ur phone because it can be annoying to read toherwise
+  // Could also set:
+  // position: absolute;
+  // left: -10%;
+  // or something
 
-    // Expand code tabs when u tap em on ur phone because it can be annoying to read toherwise
-    // Could also set:
-    // position: absolute;
-    // left: -10%;
-    // or something
-  var allPres = document.querySelectorAll("pre");
+  document.addEventListener('DOMContentLoaded', function() {
+    var allPres = document.querySelectorAll("pre");
 
-  allPres.forEach((p) => {
-    p.onclick = (e) => {
-      var allPres = document.querySelectorAll("pre");
-      allPres.forEach((p) => {
-        p.style.width = p.style.width == "140%" ? "100%" : "140%";
-      });
-    };
-  });
-
+    allPres.forEach((p) => {
+      p.onclick = (e) => {
+        var allPres = document.querySelectorAll("pre");
+        allPres.forEach((p) => {
+          p.style.width = p.style.width == "140%" ? "100%" : "140%";
+        });
+      };
+    });
+  }, false);
   </script>
 
 
