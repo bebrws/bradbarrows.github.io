@@ -1,138 +1,39 @@
 ---
 layout: post
-title: "Build your own Arm64 iOS LLDB binary"
+title: "Build Clang LLD and LLDB for Arm64 iOS"
 date: 2020-06-17 18:04:05 -0700
 comments: true
 categories: 
 ---
 
+# Getting started
 
-## NOTE: This is actually not fully working..
+The first thing you need to do is build llvm for your host architecture.
 
-Running into this error when running on iOS currently
+I use the CMake GUI for this. I just use the default settings and hit configure.
 
-        : CommandLine Error: Option 'debug-buffer-size' registered more than once!
-        LLVM ERROR: inconsistency in registered CommandLine options
-        [1]    14671 abort      ./lldb
+Then the important part is you set the LLVM_ENABLE_PROJECTS variable to contain clang. I usually use:
 
-Will look into this more though.
+        clang;lldb;lldb
 
-## Buildling an ARM64 LLDB binary for iOS off the latest llvm-project commits
+For my host build.
 
-Struggling with building lldb for iOS using the latest llvm from the llvm-project repository? Then checkout the [ninja build](https://github.com/bebrws/iosLLVMLLDBBuildStruggle) script I worked over for way too long to get your own build going now!
+Then run generate and cd into the directory and run ninja clang; ninja lld; ninja lldb
 
-Well I was too. I am positive I must have missed something with CMake to select the right Platform but I ended up just making modifications to the generated ninja build.ninja file until I got lldb to build
+## Building for iOS
 
-I thought I would just share it in case anyone else want a quick and dirty way to build lldb themselves for iOS. 
+Now here the comes the slightly more tricky part.
 
-I am also sharing the CMake files the should be enough to generate a build dir that will build all the other important binaries and libs.
+When building LLVM for iOS I get errors when using the clang provided with xCode related to libatomic or missing threads.
 
-I would just follow my CMake build with the files included here and then copy over the build.ninja file and run a good:
+You need to use the LLVM Clang build you just made for the host. (Or I think you can get by with using the Clang 10 that homebrew gets you too).
 
-    ninja -v lldb
+Either way in the CMake GUI when creating a new build directory select configure options for cross compiling.
 
-to get that built!
+Then set the clang and clang++ binaries to the ones you just built.
 
-Hope somebody finds this helpful
+This will sove any CMake errors you might be getting related to libatomic.
 
+Also be sure to set the LLVM_ENABLE_PROJECTS as above before hitting Generate.
 
-## CMake ideas
-
-Checkout the CMake GUI!!
-
-It is crazy helpful. The tooltip descriptions for what a varivarable does will save you so much time..
-
-Working through different options related to cross copmiling is also much much easier to follow with the GUI. I would recommend it.
-
-[CMake GUI Download](https://cmake.org/download/)
-
-NOTE: That in some cases where you want to change something like the C_FLAGS or the C COMPILER (CMAKE_C_COMPILER I believe) you will need to check the Advanced checkbox.
-
-Then on OSX I have a function in my ~/.zshrc to help me quickly load up a CMake GUI for any build dir that you might find helpful:
-
-   
-        function cmakeGUIDir() {
-            nohup /Applications/CMake.app/Contents/MacOS/CMake "$@" &
-        }
-   
-
-
-Then say your in the llvm-project repository folder. Let's say you want to create a new ios build folder. You can run a quick:
-
-    
-        mkdir -p ios
-        cmakeGUIDir ios
-    
-
-To get up and running with the CMake gui, pointed to the right locations (you probably will need to alter the llvm-project source directory actually but it should be close!)
-
-If you want to just use my CMake configuration that I labored over for a while I think you could create just a dummy CMake build directory like I did above. Configure for Ninja. Run generate. Then copy over all the files from the [repo here](https://github.com/bebrws/iosLLVMLLDBBuildStruggle) and goto the menu options 
-
-    
-        File -> Reload Cache 
-
-The important file should be
-
-        CMakeCache.txt
-
-However I am pretty sure you will run into some issues with the directories. At least with the llvm-project directory and the ios build directory you are targeting here. You might need to search through and replace these directories:
-
-        /Users/bbarrows/repos/llvm-project/ios
-        /Users/bbarrows/repos/llvm-project
-
-Hint: This might be important:
-
-        CMAKE_CACHEFILE_DIR:INTERNAL=/Users/bbarrows/repos/llvm-project/ios
-
-This is supposed the full path to the CMakeCache.txt file itself so having it be incorrect will probably lead to CMake freaking out. I would deff. start off by changing that one. Really I am hoping someone can get away with just applying the git diff I am about to mention and by using the ninja build script.
-
-## That should work.. right?
-
-Actually it won't.. There is even more I had to work through to get this built the wrong way. But hey, to get this right it's either your time and effort making your way through the CMake/llvm-project docuumentation (which is actually great if I am being honest) with the sweat on your brow and the taste of blood in your mouth from hours of frustrating documentation pondering followed by modification/build script generation/compilation repitiions or your just going to go along with this.. Maybe working through the puzzle of this broken ninja build is the smartest way.. maybe the wrong way is the right way. I guess my belief is who cares if it gets the job done and it doesn't eat up any more time. And this should deffinately end when I have gotten to the point where solving these error messages no longer seems to be teaching me anything.
-
-Continuuing on..
-
-Let's apply the diff and then you should be able to build.
-
-To apply the diff you will need to:
-
-	git apply llvm-project-modifications.diff
-
-Then try to build with a:
-
-        ninja -v lldb
-
-Good luck, maybe leave me an angry Github Issue or something if you run into Issues. I would just be some combination of happy and surprised if anyone reads this anyway.
-
-
-
-## No BS, how to:
-
-Apply the diff in your llvm-project repository:
-
-        cp llvm-project-modifications.diff ~/repos/llvm-project/          
-        # Above: This is assuming that you have a folder ~/repos/ where you keep all your repositories tucked away
-
-        cd  ~/repos/llvm-project/   
-        git apply llvm-project-modifications.diff
-
-
-
-Use my CMake function above to create a dummy iOS build directory:
-
-        mkdir -p ~/repos/llvm-project/ios/
-        cmakeGUIDir ~/repos/llvm-project/ios/  
-
-
-The copy over the build.ninja file from the folder LLVM11iOSBuildDirectory
-
-        cp LLVM11iOSBuildDirectory/build.ninja ~/repos/llvm-project/ios/
-        
-
-
-Then try to build with a:
-
-        cd  ~/repos/llvm-project/ios
-        ninja -v lldb
-
-With good luck that just might work. You can always try to use the CMakeCache.txt file.
+Then you should be good to go!
